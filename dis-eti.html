@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="tr" class="scroll-smooth">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="DentaCare - Diş Eti Tedavileri. Lazer ile ağrısız periodontoloji.">
+    <title>Diş Eti Tedavileri | DentaCare Klinik</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: { extend: { colors: { clinical: { white: '#FFFFFF', blue: '#E3F2FD', accent: '#81C784', primary: '#2196F3', urgent: '#FF9800', text: '#1F2937' } }, fontFamily: { sans: ['Nunito', 'sans-serif'] } } }
+        }
+    </script>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+    <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+
+<body class="font-sans text-gray-700 bg-white">
+    <nav id="navbar" class="sticky top-0 z-50 bg-white/90 backdrop-blur-lg border-b border-gray-100">
+        <div class="container mx-auto px-4 py-4 flex justify-between items-center">
+            <a href="index.html" class="flex items-center gap-2">
+                <span class="text-2xl font-bold text-clinical-primary">DentaCare</span>
+            </a>
+            <div class="hidden md:flex items-center gap-8 font-semibold text-gray-600">
+                <a href="index.html#hizmetler">Hizmetler</a>
+                <a href="index.html#iletisim">İletişim</a>
+            </div>
+            <a href="index.html#randevu"
+                class="hidden md:flex bg-clinical-primary text-white px-6 py-3 rounded-full font-bold">Randevu Al</a>
+        </div>
+    </nav>
+
+    <section class="bg-gradient-to-br from-rose-50 via-white to-pink-50 pt-16 pb-24">
+        <div class="container mx-auto px-4">
+            <div class="grid lg:grid-cols-2 gap-12 items-center">
+                <div class="space-y-6">
+                    <h1 class="text-4xl lg:text-5xl font-extrabold text-gray-800"><span class="text-rose-500">Pembe
+                            Estetik</span> & Diş Eti Tedavisi</h1>
+                    <p class="text-lg text-gray-600">Diş eti çekilmesi, kanamayı ve iltihaplanmayı lazer ile tedavi
+                        ediyoruz.</p>
+                    <a href="index.html#randevu"
+                        class="inline-flex bg-rose-500 text-white px-8 py-4 rounded-full font-bold">Randevu Al</a>
+                </div>
+                <img src="images/laminate-hero.png" alt="Diş Eti Tedavisi"
+                    class="rounded-3xl shadow-2xl w-full object-cover aspect-[4/3]">
+            </div>
+        </div>
+    </section>
+
+    <section class="py-20 bg-white">
+        <div class="container mx-auto px-4">
+            <div class="max-w-3xl mx-auto text-center space-y-6">
+                <h2 class="text-3xl font-extrabold text-gray-800">Diş Eti Hastalıkları</h2>
+                <p class="text-gray-600">Periodontitis tedavi edilmezse diş kaybına yol açabilir. Lazer ile ağrısız,
+                    dikişsiz tedavi sunuyoruz.</p>
+                <div class="grid md:grid-cols-3 gap-6 mt-8">
+                    <div class="bg-rose-50 p-6 rounded-2xl">
+                        <h3 class="font-bold text-gray-800">Diş Eti Kanaması</h3>
+                        <p class="text-gray-600 text-sm mt-2">Gingivitis belirtisi</p>
+                    </div>
+                    <div class="bg-rose-50 p-6 rounded-2xl">
+                        <h3 class="font-bold text-gray-800">Diş Eti Çekilmesi</h3>
+                        <p class="text-gray-600 text-sm mt-2">Hassasiyet ve estetik</p>
+                    </div>
+                    <div class="bg-rose-50 p-6 rounded-2xl">
+                        <h3 class="font-bold text-gray-800">Gummy Smile</h3>
+                        <p class="text-gray-600 text-sm mt-2">Lazer ile düzeltme</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="py-16 bg-gradient-to-r from-rose-500 to-rose-600 text-center">
+        <h2 class="text-3xl font-extrabold text-white mb-4">Sağlıklı Diş Etleri</h2>
+        <a href="index.html#randevu" class="inline-flex bg-white text-rose-600 px-8 py-4 rounded-full font-bold">Randevu
+            Al</a>
+    </section>
+
+    <footer class="bg-gray-900 text-white py-8 text-center text-sm">&copy; 2024 DentaCare Klinik.</footer>
+    <script src="script.js"></script>
+    <script>lucide.createIcons();</script>
+</body>
+
+</html>

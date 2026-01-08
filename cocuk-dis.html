@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="tr" class="scroll-smooth">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description"
+        content="DentaCare Klinik - Çocuk Diş Hekimliği (Pedodonti). Korkusuz çocuk diş tedavileri.">
+    <title>Çocuk Diş Hekimliği | DentaCare Klinik</title>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        clinical: { white: '#FFFFFF', blue: '#E3F2FD', accent: '#81C784', primary: '#2196F3', urgent: '#FF9800', text: '#1F2937' }
+                    },
+                    fontFamily: { sans: ['Nunito', 'sans-serif'] }
+                }
+            }
+        }
+    </script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+    <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+
+<body class="font-sans text-gray-700 bg-white">
+
+    <!-- Navbar -->
+    <nav id="navbar" class="sticky top-0 z-50 bg-white/90 backdrop-blur-lg border-b border-gray-100">
+        <div class="container mx-auto px-4 md:px-6 py-4 flex justify-between items-center">
+            <a href="index.html" class="flex items-center gap-2">
+                <div class="bg-clinical-primary/10 p-2 rounded-xl">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none"
+                        stroke="#2196F3" stroke-width="2">
+                        <path d="M16 2v2" />
+                        <path d="M8 2v2" />
+                        <path d="M12 2v2" />
+                        <path
+                            d="M4.5 9c0-1.8 1.3-3.3 3-3.5 0-.2.1-.5.5-.5h8c.4 0 .5.3.5.5 1.7.2 3 1.7 3 3.5 0 2.2-1.2 4.1-3 5-1.8.9-3 3-3.6 4.9C12.6 19.4 12.3 22 12 22s-.6-2.6-.9-3.6C10.5 16.5 9.3 14.4 7.5 13.5c-1.8-.9-3-2.8-3-5z" />
+                    </svg>
+                </div>
+                <span
+                    class="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-clinical-primary to-clinical-accent">DentaCare</span>
+            </a>
+            <div class="hidden md:flex items-center gap-8 font-semibold text-gray-600">
+                <a href="index.html#hizmetler" class="hover:text-clinical-primary">Hizmetler</a>
+                <a href="index.html#doktorlar" class="hover:text-clinical-primary">Doktorlarımız</a>
+                <a href="index.html#iletisim" class="hover:text-clinical-primary">İletişim</a>
+            </div>
+            <div class="hidden md:flex items-center gap-6">
+                <div class="flex items-center gap-2 border-r pr-4 border-gray-200">
+                    <a href="#" id="lang-tr" class="text-clinical-primary font-bold text-sm">TR</a>
+                    <span class="text-gray-300 text-sm">|</span>
+                    <a href="#" id="lang-en" class="text-gray-500 font-medium text-sm">EN</a>
+                    <span class="text-gray-300 text-sm">|</span>
+                    <a href="#" id="lang-de" class="text-gray-500 font-medium text-sm">DE</a>
+                </div>
+                <a href="index.html#randevu"
+                    class="bg-clinical-primary text-white px-6 py-3 rounded-full font-bold shadow-lg flex items-center gap-2">
+                    <i data-lucide="calendar-check" class="w-5 h-5"></i>Randevu Al
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="relative bg-gradient-to-br from-orange-50 via-white to-yellow-50 pt-16 pb-24 overflow-hidden">
+        <div class="container mx-auto px-4 md:px-6 relative z-10">
+            <div class="grid lg:grid-cols-2 gap-12 items-center">
+                <div class="space-y-6">
+                    <nav class="flex items-center gap-2 text-sm text-gray-500">
+                        <a href="index.html" class="hover:text-clinical-primary">Ana Sayfa</a>
+                        <i data-lucide="chevron-right" class="w-4 h-4"></i>
+                        <span class="text-clinical-primary font-semibold">Çocuk Diş Hekimliği</span>
+                    </nav>
+                    <h1 class="text-4xl lg:text-5xl font-extrabold text-gray-800 leading-tight">
+                        <span class="text-orange-500">Korkusuz</span> Çocuk Diş Tedavisi
+                    </h1>
+                    <p class="text-lg text-gray-600 leading-relaxed">
+                        Pedodontist eşliğinde, oyun alanı bulunan kliniğimizde çocuğunuz diş hekimini sevecek. Eğlenceli
+                        ve ağrısız tedaviler.
+                    </p>
+                    <div class="flex flex-wrap gap-4">
+                        <a href="index.html#randevu"
+                            class="bg-orange-500 hover:bg-orange-600 text-white px-8 py-4 rounded-full font-bold shadow-lg flex items-center gap-2">
+                            <i data-lucide="calendar-check" class="w-5 h-5"></i>
+                            Çocuk Muayene Randevusu
+                        </a>
+                    </div>
+                </div>
+                <div class="relative">
+                    <img src="images/pediatric-hero.png" alt="Çocuk Diş Hekimliği"
+                        class="rounded-3xl shadow-2xl w-full object-cover aspect-[4/3]">
+                    <div class="absolute -bottom-6 -left-6 bg-white p-4 rounded-2xl shadow-xl flex items-center gap-3">
+                        <div class="bg-orange-100 p-3 rounded-xl">
+                            <i data-lucide="smile" class="w-8 h-8 text-orange-500"></i>
+                        </div>
+                        <div>
+                            <p class="font-bold text-gray-800">Mutlu Çocuklar</p>
+                            <p class="text-sm text-gray-500">Oyun Alanı Mevcut</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- About Section -->
+    <section class="py-20 bg-white">
+        <div class="container mx-auto px-4 md:px-6">
+            <div class="grid lg:grid-cols-2 gap-16 items-center">
+                <div>
+                    <img src="images/pediatric-hero.png" alt="Çocuk Dostu Klinik"
+                        class="rounded-3xl shadow-xl w-full object-cover aspect-video">
+                </div>
+                <div class="space-y-6">
+                    <span class="text-clinical-primary font-bold uppercase tracking-wider text-sm">Pedodonti</span>
+                    <h2 class="text-3xl lg:text-4xl font-extrabold text-gray-800">Çocuk Diş Hekimliği Nedir?</h2>
+                    <p class="text-gray-600 leading-relaxed">
+                        Pedodonti, 0-14 yaş arası çocukların diş sağlığıyla ilgilenen uzmanlık dalıdır. Çocuğunuzun diş
+                        korkusu geliştirmeden sağlıklı ağız alışkanlıkları kazanmasını sağlıyoruz.
+                    </p>
+                    <div class="grid sm:grid-cols-2 gap-4 pt-4">
+                        <div class="flex items-center gap-3 bg-orange-50 p-4 rounded-xl">
+                            <i data-lucide="check-circle-2" class="w-6 h-6 text-orange-500"></i>
+                            <span class="font-semibold text-gray-700">Uzman Pedodontist</span>
+                        </div>
+                        <div class="flex items-center gap-3 bg-orange-50 p-4 rounded-xl">
+                            <i data-lucide="check-circle-2" class="w-6 h-6 text-orange-500"></i>
+                            <span class="font-semibold text-gray-700">Çocuk Psikolojisi</span>
+                        </div>
+                        <div class="flex items-center gap-3 bg-orange-50 p-4 rounded-xl">
+                            <i data-lucide="check-circle-2" class="w-6 h-6 text-orange-500"></i>
+                            <span class="font-semibold text-gray-700">Oyun Alanı</span>
+                        </div>
+                        <div class="flex items-center gap-3 bg-orange-50 p-4 rounded-xl">
+                            <i data-lucide="check-circle-2" class="w-6 h-6 text-orange-500"></i>
+                            <span class="font-semibold text-gray-700">Ödül Sistemi</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Services List -->
+    <section class="py-20 bg-orange-50">
+        <div class="container mx-auto px-4 md:px-6">
+            <div class="text-center mb-16">
+                <h2 class="text-3xl lg:text-4xl font-extrabold text-gray-800">Çocuk Diş Tedavileri</h2>
+            </div>
+            <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <div class="bg-white p-8 rounded-3xl shadow-lg">
+                    <div class="bg-orange-100 w-14 h-14 rounded-2xl flex items-center justify-center mb-6">
+                        <i data-lucide="shield" class="w-7 h-7 text-orange-500"></i>
+                    </div>
+                    <h3 class="font-bold text-xl text-gray-800 mb-3">Fissür Örtücü</h3>
+                    <p class="text-gray-600">Diş çürüklerini önlemek için azı dişlerinin oluk ve çukurlarına koruyucu
+                        örtü.</p>
+                </div>
+                <div class="bg-white p-8 rounded-3xl shadow-lg">
+                    <div class="bg-orange-100 w-14 h-14 rounded-2xl flex items-center justify-center mb-6">
+                        <i data-lucide="droplet" class="w-7 h-7 text-orange-500"></i>
+                    </div>
+                    <h3 class="font-bold text-xl text-gray-800 mb-3">Flor Uygulaması</h3>
+                    <p class="text-gray-600">Diş minesini güçlendiren ve çürüğe karşı koruma sağlayan flor jeli.</p>
+                </div>
+                <div class="bg-white p-8 rounded-3xl shadow-lg">
+                    <div class="bg-orange-100 w-14 h-14 rounded-2xl flex items-center justify-center mb-6">
+                        <i data-lucide="heart" class="w-7 h-7 text-orange-500"></i>
+                    </div>
+                    <h3 class="font-bold text-xl text-gray-800 mb-3">Süt Dişi Tedavisi</h3>
+                    <p class="text-gray-600">Süt dişi dolgulu, kanal tedavisi ve çekim işlemleri.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="py-20 bg-gradient-to-r from-orange-500 to-orange-600">
+        <div class="container mx-auto px-4 md:px-6 text-center">
+            <h2 class="text-3xl lg:text-4xl font-extrabold text-white mb-6">Çocuğunuzun İlk Diş Muayenesi</h2>
+            <p class="text-orange-100 text-lg mb-8 max-w-2xl mx-auto">
+                Dünya Sağlık Örgütü, ilk diş muayenesinin 1 yaşından önce yapılmasını öneriyor.
+            </p>
+            <a href="index.html#randevu"
+                class="inline-flex bg-white text-orange-600 px-8 py-4 rounded-full font-bold shadow-lg items-center gap-2">
+                <i data-lucide="calendar-check" class="w-5 h-5"></i>
+                Randevu Al
+            </a>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-gray-900 text-white pt-16 pb-8">
+        <div class="container mx-auto px-4 md:px-6">
+            <div class="border-t border-gray-800 pt-8 text-center text-gray-500 text-sm">
+                <p>&copy; 2024 DentaCare Klinik.</p>
+            </div>
+        </div>
+    </footer>
+
+    <a href="https://wa.me/905555555555" target="_blank"
+        class="fixed bottom-6 right-6 z-50 bg-green-500 text-white p-4 rounded-full shadow-lg hover:scale-110 transition-transform">
+        <i data-lucide="message-circle" class="w-8 h-8"></i>
+    </a>
+
+    <script src="script.js"></script>
+    <script>lucide.createIcons();</script>
+</body>
+
+</html>

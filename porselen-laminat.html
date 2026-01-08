@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="tr" class="scroll-smooth">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description"
+        content="DentaCare Klinik - Porselen Laminat (Yaprak Porselen). Hollywood Smile için ultra ince porselenler.">
+    <title>Porselen Laminat | DentaCare Klinik</title>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        clinical: { white: '#FFFFFF', blue: '#E3F2FD', accent: '#81C784', primary: '#2196F3', urgent: '#FF9800', text: '#1F2937' }
+                    },
+                    fontFamily: { sans: ['Nunito', 'sans-serif'] }
+                }
+            }
+        }
+    </script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+    <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+
+<body class="font-sans text-gray-700 bg-white">
+
+    <!-- Navbar -->
+    <nav id="navbar" class="sticky top-0 z-50 bg-white/90 backdrop-blur-lg border-b border-gray-100">
+        <div class="container mx-auto px-4 md:px-6 py-4 flex justify-between items-center">
+            <a href="index.html" class="flex items-center gap-2">
+                <div class="bg-clinical-primary/10 p-2 rounded-xl">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none"
+                        stroke="#2196F3" stroke-width="2">
+                        <path d="M16 2v2" />
+                        <path d="M8 2v2" />
+                        <path d="M12 2v2" />
+                        <path
+                            d="M4.5 9c0-1.8 1.3-3.3 3-3.5 0-.2.1-.5.5-.5h8c.4 0 .5.3.5.5 1.7.2 3 1.7 3 3.5 0 2.2-1.2 4.1-3 5-1.8.9-3 3-3.6 4.9C12.6 19.4 12.3 22 12 22s-.6-2.6-.9-3.6C10.5 16.5 9.3 14.4 7.5 13.5c-1.8-.9-3-2.8-3-5z" />
+                    </svg>
+                </div>
+                <span
+                    class="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-clinical-primary to-clinical-accent">DentaCare</span>
+            </a>
+            <div class="hidden md:flex items-center gap-8 font-semibold text-gray-600">
+                <a href="index.html#hizmetler" class="hover:text-clinical-primary">Hizmetler</a>
+                <a href="index.html#doktorlar" class="hover:text-clinical-primary">Doktorlarımız</a>
+                <a href="index.html#fiyatlar" class="hover:text-clinical-primary">Fiyatlar</a>
+                <a href="index.html#iletisim" class="hover:text-clinical-primary">İletişim</a>
+            </div>
+            <div class="hidden md:flex items-center gap-6">
+                <div class="flex items-center gap-2 border-r pr-4 border-gray-200">
+                    <a href="#" id="lang-tr" class="text-clinical-primary font-bold text-sm">TR</a>
+                    <span class="text-gray-300 text-sm">|</span>
+                    <a href="#" id="lang-en" class="text-gray-500 font-medium text-sm">EN</a>
+                    <span class="text-gray-300 text-sm">|</span>
+                    <a href="#" id="lang-de" class="text-gray-500 font-medium text-sm">DE</a>
+                </div>
+                <a href="index.html#randevu"
+                    class="bg-clinical-primary text-white px-6 py-3 rounded-full font-bold shadow-lg flex items-center gap-2">
+                    <i data-lucide="calendar-check" class="w-5 h-5"></i>Randevu Al
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="relative bg-gradient-to-br from-pink-50 via-white to-clinical-blue/30 pt-16 pb-24 overflow-hidden">
+        <div class="container mx-auto px-4 md:px-6 relative z-10">
+            <div class="grid lg:grid-cols-2 gap-12 items-center">
+                <div class="space-y-6">
+                    <nav class="flex items-center gap-2 text-sm text-gray-500">
+                        <a href="index.html" class="hover:text-clinical-primary">Ana Sayfa</a>
+                        <i data-lucide="chevron-right" class="w-4 h-4"></i>
+                        <span class="text-clinical-primary font-semibold">Porselen Laminat</span>
+                    </nav>
+                    <h1 class="text-4xl lg:text-5xl font-extrabold text-gray-800 leading-tight">
+                        <span class="text-pink-500">Hollywood Smile</span> ile Mükemmel Gülüş
+                    </h1>
+                    <p class="text-lg text-gray-600 leading-relaxed">
+                        Ultra ince yaprak porselenler ile dişlerinizi aşındırmadan doğal, kusursuz bir gülüşe kavuşun.
+                        0.3mm kalınlıkta, diş renginde laminatlar.
+                    </p>
+                    <div class="flex flex-wrap gap-4">
+                        <a href="index.html#randevu"
+                            class="bg-clinical-primary hover:bg-blue-600 text-white px-8 py-4 rounded-full font-bold shadow-lg flex items-center gap-2">
+                            <i data-lucide="calendar-check" class="w-5 h-5"></i>
+                            Ücretsiz Tasarım Randevusu
+                        </a>
+                    </div>
+                </div>
+                <div class="relative">
+                    <img src="images/laminate-hero.png" alt="Porselen Laminat Hollywood Smile"
+                        class="rounded-3xl shadow-2xl w-full object-cover aspect-[4/3]">
+                    <div class="absolute -bottom-6 -left-6 bg-white p-4 rounded-2xl shadow-xl flex items-center gap-3">
+                        <div class="bg-pink-100 p-3 rounded-xl">
+                            <i data-lucide="star" class="w-8 h-8 text-pink-500"></i>
+                        </div>
+                        <div>
+                            <p class="font-bold text-gray-800">15 Yıl+ Garanti</p>
+                            <p class="text-sm text-gray-500">Premium Kalite</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- About Section -->
+    <section class="py-20 bg-white">
+        <div class="container mx-auto px-4 md:px-6">
+            <div class="grid lg:grid-cols-2 gap-16 items-center">
+                <div>
+                    <img src="images/laminate-hero.png" alt="Laminat Veneer"
+                        class="rounded-3xl shadow-xl w-full object-cover aspect-video">
+                </div>
+                <div class="space-y-6">
+                    <span class="text-clinical-primary font-bold uppercase tracking-wider text-sm">Tedavi
+                        Hakkında</span>
+                    <h2 class="text-3xl lg:text-4xl font-extrabold text-gray-800">Porselen Laminat (Veneer) Nedir?</h2>
+                    <p class="text-gray-600 leading-relaxed">
+                        Porselen laminat, dişlerin ön yüzeyine yapıştırılan ultra ince (0.3-0.5mm) porselen
+                        kaplamalardır. Diş rengindeki değişimler, kırıklar, aralıklar ve şekil bozuklukları bu yöntemle
+                        düzeltilebilir.
+                    </p>
+                    <p class="text-gray-600 leading-relaxed">
+                        <strong>E-Max</strong> ve <strong>Feldspat</strong> porselen seçenekleri ile doğal diş görünümü
+                        ve parlaklığı sağlanır.
+                    </p>
+                    <div class="grid sm:grid-cols-2 gap-4 pt-4">
+                        <div class="flex items-center gap-3 bg-pink-50 p-4 rounded-xl">
+                            <i data-lucide="check-circle-2" class="w-6 h-6 text-pink-500"></i>
+                            <span class="font-semibold text-gray-700">Minimal Aşındırma</span>
+                        </div>
+                        <div class="flex items-center gap-3 bg-pink-50 p-4 rounded-xl">
+                            <i data-lucide="check-circle-2" class="w-6 h-6 text-pink-500"></i>
+                            <span class="font-semibold text-gray-700">Doğal Görünüm</span>
+                        </div>
+                        <div class="flex items-center gap-3 bg-pink-50 p-4 rounded-xl">
+                            <i data-lucide="check-circle-2" class="w-6 h-6 text-pink-500"></i>
+                            <span class="font-semibold text-gray-700">Lekelenmeye Dayanıklı</span>
+                        </div>
+                        <div class="flex items-center gap-3 bg-pink-50 p-4 rounded-xl">
+                            <i data-lucide="check-circle-2" class="w-6 h-6 text-pink-500"></i>
+                            <span class="font-semibold text-gray-700">2 Seansta Tamamlanır</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="py-20 bg-gradient-to-r from-pink-500 to-pink-600">
+        <div class="container mx-auto px-4 md:px-6 text-center">
+            <h2 class="text-3xl lg:text-4xl font-extrabold text-white mb-6">Hayalinizdeki Gülüşe Kavuşun</h2>
+            <p class="text-pink-100 text-lg mb-8 max-w-2xl mx-auto">
+                Dijital gülüş tasarımı ile tedavi öncesi sonucu görün. Ücretsiz danışmanlık randevunuzu alın.
+            </p>
+            <div class="flex flex-wrap justify-center gap-4">
+                <a href="index.html#randevu"
+                    class="bg-white text-pink-600 px-8 py-4 rounded-full font-bold shadow-lg flex items-center gap-2">
+                    <i data-lucide="calendar-check" class="w-5 h-5"></i>
+                    Ücretsiz Randevu Al
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-gray-900 text-white pt-16 pb-8">
+        <div class="container mx-auto px-4 md:px-6">
+            <div class="grid md:grid-cols-4 gap-12 mb-12">
+                <div>
+                    <a href="index.html" class="flex items-center gap-2 mb-6">
+                        <div class="bg-clinical-primary/20 p-2 rounded-xl">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24"
+                                fill="none" stroke="#2196F3" stroke-width="2">
+                                <path d="M16 2v2" />
+                                <path d="M8 2v2" />
+                                <path d="M12 2v2" />
+                                <path
+                                    d="M4.5 9c0-1.8 1.3-3.3 3-3.5 0-.2.1-.5.5-.5h8c.4 0 .5.3.5.5 1.7.2 3 1.7 3 3.5 0 2.2-1.2 4.1-3 5-1.8.9-3 3-3.6 4.9C12.6 19.4 12.3 22 12 22s-.6-2.6-.9-3.6C10.5 16.5 9.3 14.4 7.5 13.5c-1.8-.9-3-2.8-3-5z" />
+                            </svg>
+                        </div>
+                        <span class="text-2xl font-bold">DentaCare</span>
+                    </a>
+                    <p class="text-gray-400 text-sm">Hollywood Smile uzmanı kliniğiniz.</p>
+                </div>
+                <div>
+                    <h4 class="font-bold text-lg mb-6">Tedaviler</h4>
+                    <ul class="space-y-3 text-gray-400">
+                        <li><a href="dolgu-kanal.html" class="hover:text-white">Dolgu & Kanal</a></li>
+                        <li><a href="dis-beyazlatma.html" class="hover:text-white">Diş Beyazlatma</a></li>
+                        <li><a href="porselen-laminat.html" class="hover:text-white text-white font-semibold">Porselen
+                                Laminat</a></li>
+                        <li><a href="implant.html" class="hover:text-white">İmplant</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="font-bold text-lg mb-6">Bağlantılar</h4>
+                    <ul class="space-y-3 text-gray-400">
+                        <li><a href="index.html#hizmetler" class="hover:text-white">Hizmetler</a></li>
+                        <li><a href="index.html#iletisim" class="hover:text-white">İletişim</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="font-bold text-lg mb-6">İletişim</h4>
+                    <ul class="space-y-3 text-gray-400 text-sm">
+                        <li class="flex items-center gap-2"><i data-lucide="phone" class="w-4 h-4"></i>0850 222 33 44
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            <div class="border-t border-gray-800 pt-8 text-center text-gray-500 text-sm">
+                <p>&copy; 2024 DentaCare Klinik.</p>
+            </div>
+        </div>
+    </footer>
+
+    <a href="https://wa.me/905555555555" target="_blank"
+        class="fixed bottom-6 right-6 z-50 bg-green-500 text-white p-4 rounded-full shadow-lg hover:scale-110 transition-transform">
+        <i data-lucide="message-circle" class="w-8 h-8"></i>
+    </a>
+
+    <script src="script.js"></script>
+    <script>lucide.createIcons();</script>
+</body>
+
+</html>
