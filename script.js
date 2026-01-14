@@ -1,6 +1,121 @@
 
 document.addEventListener('DOMContentLoaded', () => {
 
+    // ============================================
+    // Scroll Progress Bar
+    // ============================================
+    const scrollProgress = document.createElement('div');
+    scrollProgress.className = 'scroll-progress';
+    document.body.prepend(scrollProgress);
+
+    function updateScrollProgress() {
+        const windowHeight = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+        const scrolled = (window.scrollY / windowHeight) * 100;
+        scrollProgress.style.width = scrolled + '%';
+    }
+
+    // ============================================
+    // Smart Sticky Header (Hide on scroll down, show on scroll up)
+    // ============================================
+    const navbar = document.getElementById('navbar');
+    let lastScroll = 0;
+    const scrollThreshold = 100;
+
+    function updateStickyHeader() {
+        const currentScroll = window.pageYOffset;
+
+        if (currentScroll <= scrollThreshold) {
+            navbar.classList.remove('scroll-up', 'scroll-down');
+            navbar.classList.remove('shadow-md');
+            return;
+        }
+
+        if (currentScroll > lastScroll && !navbar.classList.contains('scroll-down')) {
+            // Scrolling down
+            navbar.classList.remove('scroll-up');
+            navbar.classList.add('scroll-down');
+        } else if (currentScroll < lastScroll && navbar.classList.contains('scroll-down')) {
+            // Scrolling up
+            navbar.classList.remove('scroll-down');
+            navbar.classList.add('scroll-up');
+        }
+
+        if (currentScroll > 10) {
+            navbar.classList.add('shadow-md');
+        } else {
+            navbar.classList.remove('shadow-md');
+        }
+
+        lastScroll = currentScroll;
+    }
+
+    // Combined scroll handler for performance
+    window.addEventListener('scroll', () => {
+        updateScrollProgress();
+        updateStickyHeader();
+    }, { passive: true });
+
+    // ============================================
+    // Scroll-Triggered Animations (Intersection Observer)
+    // ============================================
+    const animationObserverOptions = {
+        threshold: 0.1,
+        rootMargin: '0px 0px -50px 0px'
+    };
+
+    const animationObserver = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.classList.add('animate-in');
+                // Only unobserve if not stagger animation
+                if (!entry.target.classList.contains('animate-stagger')) {
+                    animationObserver.unobserve(entry.target);
+                }
+            }
+        });
+    }, animationObserverOptions);
+
+    // Observe all elements with animation classes
+    document.querySelectorAll('.animate-on-scroll, .animate-slide-left, .animate-slide-right, .animate-scale, .animate-stagger').forEach(el => {
+        animationObserver.observe(el);
+    });
+
+    // ============================================
+    // Animated Counters
+    // ============================================
+    function animateCounter(counter) {
+        const target = parseInt(counter.getAttribute('data-target'));
+        const duration = 2000; // 2 seconds
+        const increment = target / (duration / 16); // 60fps
+        let current = 0;
+
+        const updateCounter = () => {
+            current += increment;
+            if (current < target) {
+                counter.textContent = Math.floor(current).toLocaleString('tr-TR');
+                requestAnimationFrame(updateCounter);
+            } else {
+                counter.textContent = target.toLocaleString('tr-TR');
+            }
+        };
+
+        updateCounter();
+    }
+
+    const counterObserver = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting && !entry.target.classList.contains('counted')) {
+                entry.target.classList.add('counted');
+                animateCounter(entry.target);
+                counterObserver.unobserve(entry.target);
+            }
+        });
+    }, { threshold: 0.5 });
+
+    document.querySelectorAll('.counter').forEach(counter => {
+        counterObserver.observe(counter);
+    });
+
     // --- Mobile Menu Logic ---
     const mobileMenuBtn = document.getElementById('mobile-menu-btn');
     const closeMenuBtn = document.getElementById('close-menu-btn');
@@ -12,10 +127,12 @@ document.addEventListener('DOMContentLoaded', () => {
             mobileMenu.classList.remove('translate-x-full');
             mobileMenu.classList.add('translate-x-0');
             document.body.classList.add('overflow-hidden');
+            document.body.classList.add('no-scroll');
         } else {
             mobileMenu.classList.add('translate-x-full');
             mobileMenu.classList.remove('translate-x-0');
             document.body.classList.remove('overflow-hidden');
+            document.body.classList.remove('no-scroll');
         }
 
         // Reinitialize Lucide icons after menu is shown
@@ -29,17 +146,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
     mobileLinks.forEach(link => {
         link.addEventListener('click', toggleMenu);
-    });
-
-    // --- Sticky Navbar Logic ---
-    const navbar = document.getElementById('navbar');
-
-    window.addEventListener('scroll', () => {
-        if (window.scrollY > 10) {
-            navbar.classList.add('shadow-md');
-        } else {
-            navbar.classList.remove('shadow-md');
-        }
     });
 
     // --- Smooth Scroll for Anchor Links ---
@@ -450,7 +556,140 @@ document.addEventListener('DOMContentLoaded', () => {
             'footer_about': 'Ağrısız diş hekimliği konseptiyle hizmet veren kliniğimizde, son teknoloji cihazlar ve uzman kadromuzla gülüşünüzü tasarlıyoruz.',
             'footer_links': 'Hızlı Bağlantılar',
             'footer_services': 'Popüler Tedaviler',
-            'footer_copyright': '&copy; 2024 DentaCare Klinik. Tüm hakları saklıdır.'
+            'footer_copyright': '&copy; 2024 DentaCare Klinik. Tüm hakları saklıdır.',
+
+            // Before/After Slider
+            'ba_before': 'ÖNCE',
+            'ba_after': 'SONRA',
+            'gallery_desc': 'Kaydırıcıyı hareket ettirerek tedavi öncesi ve sonrası farkı görün',
+
+            // Booking Wizard
+            'wizard_subtitle': 'Hızlı Randevu',
+            'wizard_title': '3 Adımda Online Randevu',
+            'wizard_desc': 'Hizmet seçin, doktor belirleyin, size uygun zamanı ayarlayın.',
+            'wizard_step1': 'Hizmet',
+            'wizard_step2': 'Doktor',
+            'wizard_step3': 'Tarih/Saat',
+            'wizard_select_service': 'Tedavi Seçin',
+            'wizard_select_doctor': 'Doktor Seçin',
+            'wizard_select_datetime': 'Tarih ve Saat Seçin',
+            'wizard_date': 'Tarih',
+            'wizard_time': 'Saat',
+            'wizard_back': 'Geri',
+            'wizard_confirm': 'Randevuyu Onayla',
+            'wizard_success_title': 'Randevunuz Alındı!',
+            'wizard_success_desc': 'En kısa sürede sizi arayarak randevunuzu onaylayacağız.',
+            'wizard_new_appointment': 'Yeni Randevu',
+
+            // Cost Calculator
+            'calc_subtitle': 'Fiyat Hesaplama',
+            'calc_title': 'Online Tedavi Maliyet Hesaplayıcı',
+            'calc_desc': 'Tedavilerinizi seçin, tahmini maliyeti anında görün.',
+            'calc_total': 'Toplam Tahmini Maliyet',
+            'calc_monthly': 'Aylık Taksit (12 ay)',
+            'calc_monthly_payment': 'Aylık Ödeme',
+            'calc_one_time': 'Tek Seferde',
+            'calc_installment': 'Taksitli',
+            'calc_get_quote': 'Teklif Al',
+            'calc_note': '* Kesin fiyatlar muayene sonrası belirlenir.',
+            'calc_select_treatments': 'Tedavileri Seçin',
+            'calc_implant': 'Dental İmplant',
+            'calc_implant_desc': 'Premium Straumann/Nobel',
+            'calc_zirconium': 'Zirkonyum Kaplama',
+            'calc_zirconium_desc': 'Full Porselen Estetik',
+            'calc_whitening': 'Diş Beyazlatma',
+            'calc_whitening_desc': 'Ofis Tipi LED Beyazlatma',
+            'calc_laminate': 'Porselen Laminat',
+            'calc_laminate_desc': 'E-Max Veneer',
+            'calc_filling': 'Estetik Dolgu',
+            'calc_filling_desc': 'Kompozit Restorasyon',
+
+            // Before/After Gallery
+            'gallery_subtitle': 'Gerçek Sonuçlar',
+            'gallery_title': 'Gülüşünüzü Dönüştürüyoruz',
+            'gallery_desc': 'Hastalarımızın tedavi öncesi ve sonrası gerçek görüntüleri',
+            'gallery_before': 'ÖNCE',
+            'gallery_after': 'SONRA',
+            'gallery_case_whitening': 'Diş Beyazlatma',
+            'gallery_case_whitening_desc': '1 Seans • Ofis Tipi LED',
+            'gallery_case_veneers': 'Porselen Laminat',
+            'gallery_case_veneers_desc': '8 Diş • Hollywood Smile',
+            'gallery_case_implant': 'İmplant Tedavisi',
+            'gallery_case_implant_desc': '2 İmplant • All-on-4',
+
+            // Chat Widget
+            'chat_title': 'Canlı Destek',
+            'chat_welcome': 'Merhaba! 👋 Size nasıl yardımcı olabilirim?',
+            'chat_placeholder': 'Mesajınızı yazın...',
+            'chat_quick_appointment': 'Randevu Almak İstiyorum',
+            'chat_agent_name': 'Seda Yılmaz',
+            'chat_agent_role': 'Müşteri İlişkileri',
+            'chat_welcome_p1': 'Merhaba! 👋 DentaCare\'e hoş geldiniz.',
+            'chat_welcome_p2': 'Size nasıl yardımcı olabilirim?',
+            'chat_action_appt': '📅 Randevu Al',
+            'chat_action_price': '💰 Fiyatlar',
+            'chat_action_emergency': '🚨 Acil Durum',
+            'chat_action_whatsapp': '📱 WhatsApp\'tan Görüşelim',
+            'chat_action_call': '📞 Sizi Arayalım',
+            'chat_system_redirect': 'Uzmanımıza aktarılıyorsunuz...',
+            'chat_system_call_req': 'Numaranızı girin:',
+            'chat_call_success': '✅ Talebiniz alındı! 15 dk içinde aranacaksınız.',
+            'chat_greeting_morning': 'Günaydın! ☀️',
+            'chat_greeting_afternoon': 'Tünaydın! 🌤️',
+            'chat_greeting_evening': 'İyi akşamlar! 🌙',
+            'chat_trigger_implant': 'Eksik dişlerinizi tamamlamak ister misiniz?',
+            'chat_trigger_price': 'Fiyatlarımız hakkında detaylı bilgi ister misiniz?',
+            'chat_trigger_contact': 'Size hemen ulaşmamızı ister misiniz?',
+            'chat_trigger_exit': 'Gitmeden önce bir sorunuz var mı?',
+            'chat_ask_treatment': 'Hangi tedaviyle ilgileniyorsunuz?',
+            'chat_ask_teeth_count': 'Kaç diş için düşünüyorsunuz?',
+            'chat_option_implant': 'İmplant / Vidalı Diş',
+            'chat_option_zirconium': 'Zirkonyum Kaplama',
+            'chat_option_other': 'Diğer / Danışma',
+            'chat_lead_offer': 'Sizin için özel bir kampanya tanımlayabilirim. WhatsApp üzerinden detaylı fiyat tablosunu göndermemi ister misiniz?',
+            'chat_btn_yes_whatsapp': '✅ Evet, WhatsApp\'tan Gönder',
+            'chat_btn_no_thanks': '❌ Hayır, Teşekkürler',
+            'chat_quick_prices': 'Fiyat Bilgisi',
+            'chat_quick_info': 'Bilgi Almak İstiyorum',
+
+            // Seda 4.0 Smart Responses
+            'seda_typing': 'Seda yazıyor',
+            'seda_help': 'Size nasıl yardımcı olabilirim?',
+            'seda_emergency': 'Diş ağrısı çok rahatsız edici, anlıyorum! 🦷 Sizi hemen aynı gün randevuya alalım.',
+            'seda_emergency_btn': '🚨 ACİL Randevu Al',
+            'seda_call_now': '📞 Hemen Ara',
+            'seda_whitening': 'Diş beyazlatma ile ilgileniyorsunuz! ✨ Hollywood gülüşüne sadece bir adım uzaktasınız.',
+            'seda_kids': 'Çocuk diş hekimliği (Pedodonti) uzmanlarımız minik hastalarımız için özel deneyim sunuyor! 👶',
+            'seda_kids_appt': '📅 Çocuk Randevusu',
+            'seda_ask_question': '💬 Soru Sor',
+            'seda_thanks': 'Rica ederim! 😊 Başka bir sorunuz olursa buradayım. İyi günler dilerim!',
+            'seda_fallback': 'Bunu tam anlayamadım ama şunlardan birini mi demek istediniz?',
+            'seda_online_appt': '📅 Online Randevu',
+            'seda_calc_price': '💰 Fiyat Hesapla',
+            'seda_customer_service': '📞 Müşteri Hizmetleri',
+            'seda_redirect_calc': 'Anında fiyat hesaplamak için sizi **Akıllı Hesaplayıcıya** yönlendiriyorum... 🧮',
+            'seda_redirect_appt': 'Sizi online randevu sihirbazına yönlendiriyorum...',
+
+            // Appointment Tracker Panel
+            'tracker_title': 'Randevularım',
+            'tracker_active': 'aktif randevu',
+            'tracker_status_call': 'Aranacaksınız',
+            'tracker_status_pending': 'Beklemede',
+
+            // Success Panels
+            'success_title': 'Randevunuz Alındı!',
+            'success_subtitle': 'Talebiniz başarıyla iletildi.',
+            'success_call_title': 'Sizi En Kısa Sürede Arayacağız!',
+            'success_call_desc': 'Genellikle 15 dakika içinde dönüş yapıyoruz.',
+            'success_new_btn': 'Yeni Randevu Oluştur',
+            'success_summary_name': 'Ad Soyad',
+            'success_summary_phone': 'Telefon',
+            'success_summary_service': 'Hizmet',
+            'success_summary_date': 'Tarih',
+
+            // Form States
+            'form_sending': 'Gönderiliyor...',
+            'form_send_request': 'Randevu Talebi Gönder'
         },
         'en': {
             // Top Banner
@@ -799,7 +1038,140 @@ document.addEventListener('DOMContentLoaded', () => {
             'footer_about': 'In our clinic serving with the pain-free dentistry concept, we design your smile with state-of-the-art devices and our expert staff.',
             'footer_links': 'Quick Links',
             'footer_services': 'Popular Treatments',
-            'footer_copyright': '&copy; 2024 DentaCare Clinic. All rights reserved.'
+            'footer_copyright': '&copy; 2024 DentaCare Clinic. All rights reserved.',
+
+            // Before/After Slider
+            'ba_before': 'BEFORE',
+            'ba_after': 'AFTER',
+            'gallery_desc': 'Move the slider to see the before and after difference',
+
+            // Booking Wizard
+            'wizard_subtitle': 'Quick Appointment',
+            'wizard_title': 'Online Appointment in 3 Steps',
+            'wizard_desc': 'Select service, choose doctor, pick your preferred time.',
+            'wizard_step1': 'Service',
+            'wizard_step2': 'Doctor',
+            'wizard_step3': 'Date/Time',
+            'wizard_select_service': 'Select Treatment',
+            'wizard_select_doctor': 'Select Doctor',
+            'wizard_select_datetime': 'Select Date and Time',
+            'wizard_date': 'Date',
+            'wizard_time': 'Time',
+            'wizard_back': 'Back',
+            'wizard_confirm': 'Confirm Appointment',
+            'wizard_success_title': 'Appointment Received!',
+            'wizard_success_desc': 'We will call you shortly to confirm your appointment.',
+            'wizard_new_appointment': 'New Appointment',
+
+            // Cost Calculator
+            'calc_subtitle': 'Price Calculator',
+            'calc_title': 'Online Treatment Cost Calculator',
+            'calc_desc': 'Select treatments, see estimated cost instantly.',
+            'calc_total': 'Total Estimated Cost',
+            'calc_monthly': 'Monthly Installment (12 months)',
+            'calc_monthly_payment': 'Monthly Payment',
+            'calc_one_time': 'One Time',
+            'calc_installment': 'Installments',
+            'calc_get_quote': 'Get Quote',
+            'calc_note': '* Final prices determined after examination.',
+            'calc_select_treatments': 'Select Treatments',
+            'calc_implant': 'Dental Implant',
+            'calc_implant_desc': 'Premium Straumann/Nobel',
+            'calc_zirconium': 'Zirconium Crown',
+            'calc_zirconium_desc': 'Full Porcelain Aesthetic',
+            'calc_whitening': 'Teeth Whitening',
+            'calc_whitening_desc': 'Office LED Whitening',
+            'calc_laminate': 'Porcelain Laminate',
+            'calc_laminate_desc': 'E-Max Veneer',
+            'calc_filling': 'Aesthetic Filling',
+            'calc_filling_desc': 'Composite Restoration',
+
+            // Before/After Gallery
+            'gallery_subtitle': 'Real Results',
+            'gallery_title': 'Transforming Your Smile',
+            'gallery_desc': 'Real before and after images of our patients',
+            'gallery_before': 'BEFORE',
+            'gallery_after': 'AFTER',
+            'gallery_case_whitening': 'Teeth Whitening',
+            'gallery_case_whitening_desc': '1 Session • Office LED',
+            'gallery_case_veneers': 'Porcelain Veneers',
+            'gallery_case_veneers_desc': '8 Teeth • Hollywood Smile',
+            'gallery_case_implant': 'Implant Treatment',
+            'gallery_case_implant_desc': '2 Implants • All-on-4',
+
+            // Chat Widget
+            'chat_title': 'Live Support',
+            'chat_welcome': 'Hello! 👋 How can I help you?',
+            'chat_placeholder': 'Type your message...',
+            'chat_agent_name': 'Sarah Smith',
+            'chat_agent_role': 'Customer Relations',
+            'chat_welcome_p1': 'Hello! 👋 Welcome to DentaCare.',
+            'chat_welcome_p2': 'How can I help you today?',
+            'chat_action_appt': '📅 Book Appointment',
+            'chat_action_price': '💰 Prices',
+            'chat_action_emergency': '🚨 Emergency',
+            'chat_action_whatsapp': '📱 Chat on WhatsApp',
+            'chat_action_call': '📞 Request Callback',
+            'chat_system_redirect': 'Redirecting to specialist...',
+            'chat_system_call_req': 'Enter your number:',
+            'chat_call_success': '✅ Request received! We\'ll call back in 15 mins.',
+            'chat_greeting_morning': 'Good Morning! ☀️',
+            'chat_greeting_afternoon': 'Good Afternoon! 🌤️',
+            'chat_greeting_evening': 'Good Evening! 🌙',
+            'chat_trigger_implant': 'Do you want to complete your missing teeth?',
+            'chat_trigger_price': 'Do you want detailed price information?',
+            'chat_trigger_contact': 'Would you like us to contact you immediately?',
+            'chat_trigger_exit': 'Do you have a question before you leave?',
+            'chat_ask_treatment': 'Which treatment are you interested in?',
+            'chat_ask_teeth_count': 'How many teeth are you considering?',
+            'chat_option_implant': 'Implant',
+            'chat_option_zirconium': 'Zirconium Crown',
+            'chat_option_other': 'Other / Consultation',
+            'chat_lead_offer': 'I can define a special offer for you. Should I send the detailed price list via WhatsApp?',
+            'chat_btn_yes_whatsapp': '✅ Yes, Send via WhatsApp',
+            'chat_btn_no_thanks': '❌ No, Thanks',
+            'chat_quick_appointment': 'Book Appointment',
+            'chat_quick_prices': 'Price Info',
+            'chat_quick_info': 'Get More Info',
+
+            // Seda 4.0 Smart Responses
+            'seda_typing': 'Seda is typing',
+            'seda_help': 'How can I help you?',
+            'seda_emergency': 'Tooth pain is very uncomfortable, I understand! 🦷 Let us schedule you for a same-day appointment.',
+            'seda_emergency_btn': '🚨 URGENT Appointment',
+            'seda_call_now': '📞 Call Now',
+            'seda_whitening': 'You are interested in teeth whitening! ✨ You are just one step away from a Hollywood smile.',
+            'seda_kids': 'Our pediatric dentistry (Pedodontics) specialists offer a special experience for our little patients! 👶',
+            'seda_kids_appt': '📅 Child Appointment',
+            'seda_ask_question': '💬 Ask a Question',
+            'seda_thanks': 'You are welcome! 😊 If you have any other questions, I am here. Have a great day!',
+            'seda_fallback': 'I did not quite understand that, but did you mean one of these?',
+            'seda_online_appt': '📅 Online Appointment',
+            'seda_calc_price': '💰 Calculate Price',
+            'seda_customer_service': '📞 Customer Service',
+            'seda_redirect_calc': 'I am redirecting you to the **Smart Calculator** for instant pricing... 🧮',
+            'seda_redirect_appt': 'I am redirecting you to the online appointment wizard...',
+
+            // Appointment Tracker Panel
+            'tracker_title': 'My Appointments',
+            'tracker_active': 'active appointment',
+            'tracker_status_call': 'You will be called',
+            'tracker_status_pending': 'Pending',
+
+            // Success Panels
+            'success_title': 'Appointment Received!',
+            'success_subtitle': 'Your request has been successfully submitted.',
+            'success_call_title': 'We Will Call You Shortly!',
+            'success_call_desc': 'We typically respond within 15 minutes.',
+            'success_new_btn': 'Create New Appointment',
+            'success_summary_name': 'Full Name',
+            'success_summary_phone': 'Phone',
+            'success_summary_service': 'Service',
+            'success_summary_date': 'Date',
+
+            // Form States
+            'form_sending': 'Sending...',
+            'form_send_request': 'Send Appointment Request'
         },
         'de': {
             // Top Banner
@@ -1148,9 +1520,153 @@ document.addEventListener('DOMContentLoaded', () => {
             'footer_about': 'In unserer Klinik mit dem Konzept der schmerzfreien Zahnheilkunde gestalten wir Ihr Lächeln mit modernsten Geräten und unserem Expertenteam.',
             'footer_links': 'Schnelllinks',
             'footer_services': 'Beliebte Behandlungen',
-            'footer_copyright': '&copy; 2024 DentaCare Klinik. Alle Rechte vorbehalten.'
+            'footer_copyright': '&copy; 2024 DentaCare Klinik. Alle Rechte vorbehalten.',
+
+            // Before/After Slider
+            'ba_before': 'VORHER',
+            'ba_after': 'NACHHER',
+            'gallery_desc': 'Bewegen Sie den Schieberegler, um den Vorher-Nachher-Unterschied zu sehen',
+
+            // Booking Wizard
+            'wizard_subtitle': 'Schneller Termin',
+            'wizard_title': 'Online-Termin in 3 Schritten',
+            'wizard_desc': 'Wählen Sie Behandlung, Arzt und Ihre bevorzugte Zeit.',
+            'wizard_step1': 'Behandlung',
+            'wizard_step2': 'Arzt',
+            'wizard_step3': 'Datum/Zeit',
+            'wizard_select_service': 'Behandlung wählen',
+            'wizard_select_doctor': 'Arzt wählen',
+            'wizard_select_datetime': 'Datum und Uhrzeit wählen',
+            'wizard_date': 'Datum',
+            'wizard_time': 'Uhrzeit',
+            'wizard_back': 'Zurück',
+            'wizard_confirm': 'Termin bestätigen',
+            'wizard_success_title': 'Termin erhalten!',
+            'wizard_success_desc': 'Wir werden Sie in Kürze anrufen, um Ihren Termin zu bestätigen.',
+            'wizard_new_appointment': 'Neuer Termin',
+
+            // Cost Calculator
+            'calc_subtitle': 'Preisrechner',
+            'calc_title': 'Online-Behandlungskostenrechner',
+            'calc_desc': 'Wählen Sie Behandlungen, sehen Sie die geschätzten Kosten sofort.',
+            'calc_total': 'Geschätzte Gesamtkosten',
+            'calc_monthly': 'Monatliche Rate (12 Monate)',
+            'calc_monthly_payment': 'Monatliche Zahlung',
+            'calc_one_time': 'Einmalig',
+            'calc_installment': 'Ratenzahlung',
+            'calc_get_quote': 'Angebot anfordern',
+            'calc_note': '* Endpreise werden nach der Untersuchung festgelegt.',
+            'calc_select_treatments': 'Behandlungen Auswählen',
+            'calc_implant': 'Zahnimplantat',
+            'calc_implant_desc': 'Premium Straumann/Nobel',
+            'calc_zirconium': 'Zirkonkrone',
+            'calc_zirconium_desc': 'Vollkeramik Ästhetik',
+            'calc_whitening': 'Zahnaufhellung',
+            'calc_whitening_desc': 'Office LED Bleaching',
+            'calc_laminate': 'Porzellan-Laminat',
+            'calc_laminate_desc': 'E-Max Veneer',
+            'calc_filling': 'Ästhetische Füllung',
+            'calc_filling_desc': 'Komposit-Restauration',
+
+            // Before/After Gallery
+            'gallery_subtitle': 'Echte Ergebnisse',
+            'gallery_title': 'Wir Verwandeln Ihr Lächeln',
+            'gallery_desc': 'Echte Vorher-Nachher-Bilder unserer Patienten',
+            'gallery_before': 'VORHER',
+            'gallery_after': 'NACHHER',
+            'gallery_case_whitening': 'Zahnaufhellung',
+            'gallery_case_whitening_desc': '1 Sitzung • Office LED',
+            'gallery_case_veneers': 'Porzellan-Veneers',
+            'gallery_case_veneers_desc': '8 Zähne • Hollywood Smile',
+            'gallery_case_implant': 'Implantat-Behandlung',
+            'gallery_case_implant_desc': '2 Implantate • All-on-4',
+
+            // Chat Widget
+            'chat_title': 'Live-Support',
+            'chat_welcome': 'Hallo! 👋 Wie kann ich Ihnen helfen?',
+            'chat_placeholder': 'Nachricht eingeben...',
+            'chat_agent_name': 'Seda Yılmaz',
+            'chat_agent_role': 'Kundenbetreuung',
+            'chat_welcome_p1': 'Hallo! 👋 Willkommen bei DentaCare.',
+            'chat_welcome_p2': 'Wie kann ich Ihnen helfen?',
+            'chat_action_appt': '📅 Termin Vereinbaren',
+            'chat_action_price': '💰 Preise',
+            'chat_action_emergency': '🚨 Notfall',
+            'chat_action_whatsapp': '📱 WhatsApp Chat',
+            'chat_action_call': '📞 Rückruf anfordern',
+            'chat_system_redirect': 'Weiterleitung zum Experten...',
+            'chat_system_call_req': 'Geben Sie Ihre Nummer ein:',
+            'chat_call_success': '✅ Anfrage erhalten! Wir rufen in 15 Min. zurück.',
+            'chat_greeting_morning': 'Guten Morgen! ☀️',
+            'chat_greeting_afternoon': 'Guten Tag! 🌤️',
+            'chat_greeting_evening': 'Guten Abend! 🌙',
+            'chat_trigger_implant': 'Möchten Sie fehlende Zähne ersetzen?',
+            'chat_trigger_price': 'Möchten Sie detaillierte Preisinformationen?',
+            'chat_trigger_contact': 'Sollen wir Sie sofort kontaktieren?',
+            'chat_trigger_exit': 'Haben Sie eine Frage, bevor Sie gehen?',
+            'chat_ask_treatment': 'An welcher Behandlung sind Sie interessiert?',
+            'chat_ask_teeth_count': 'Für wie viele Zähne denken Sie?',
+            'chat_option_implant': 'Implantat',
+            'chat_option_zirconium': 'Zirkonkrone',
+            'chat_option_other': 'Andere / Beratung',
+            'chat_lead_offer': 'Ich kann ein Sonderangebot für Sie definieren. Soll ich Ihnen die detaillierte Preisliste über WhatsApp senden?',
+            'chat_btn_yes_whatsapp': '✅ Ja, per WhatsApp senden',
+            'chat_btn_no_thanks': '❌ Nein, danke',
+            'chat_quick_appointment': 'Termin buchen',
+            'chat_quick_prices': 'Preisinfo',
+            'chat_quick_info': 'Mehr Infos',
+
+            // Seda 4.0 Smart Responses
+            'seda_typing': 'Seda schreibt',
+            'seda_help': 'Wie kann ich Ihnen helfen?',
+            'seda_emergency': 'Zahnschmerzen sind sehr unangenehm, ich verstehe! 🦷 Lassen Sie uns einen Termin für heute vereinbaren.',
+            'seda_emergency_btn': '🚨 DRINGEND Termin',
+            'seda_call_now': '📞 Jetzt Anrufen',
+            'seda_whitening': 'Sie interessieren sich für Zahnaufhellung! ✨ Sie sind nur einen Schritt von einem Hollywood-Lächeln entfernt.',
+            'seda_kids': 'Unsere Kinderzahnärzte (Pedodontie) bieten unseren kleinen Patienten ein besonderes Erlebnis! 👶',
+            'seda_kids_appt': '📅 Kindertermin',
+            'seda_ask_question': '💬 Frage Stellen',
+            'seda_thanks': 'Gern geschehen! 😊 Bei weiteren Fragen bin ich hier. Schönen Tag noch!',
+            'seda_fallback': 'Ich habe das nicht ganz verstanden, meinten Sie eines davon?',
+            'seda_online_appt': '📅 Online Termin',
+            'seda_calc_price': '💰 Preis Berechnen',
+            'seda_customer_service': '📞 Kundenservice',
+            'seda_redirect_calc': 'Ich leite Sie zum **Smart-Rechner** für sofortige Preise weiter... 🧮',
+            'seda_redirect_appt': 'Ich leite Sie zum Online-Terminassistenten weiter...',
+
+            // Appointment Tracker Panel
+            'tracker_title': 'Meine Termine',
+            'tracker_active': 'aktiver Termin',
+            'tracker_status_call': 'Sie werden angerufen',
+            'tracker_status_pending': 'Ausstehend',
+
+            // Success Panels
+            'success_title': 'Termin Erhalten!',
+            'success_subtitle': 'Ihre Anfrage wurde erfolgreich übermittelt.',
+            'success_call_title': 'Wir Rufen Sie Bald An!',
+            'success_call_desc': 'Wir antworten normalerweise innerhalb von 15 Minuten.',
+            'success_new_btn': 'Neuen Termin Erstellen',
+            'success_summary_name': 'Vollständiger Name',
+            'success_summary_phone': 'Telefon',
+            'success_summary_service': 'Behandlung',
+            'success_summary_date': 'Datum',
+
+            // Form States
+            'form_sending': 'Wird gesendet...',
+            'form_send_request': 'Terminanfrage Senden'
         }
     };
+
+    // ============================================
+    // getText() - Global Translation Helper
+    // ============================================
+    function getText(key, fallback = '') {
+        const lang = localStorage.getItem('dentacare-lang') || 'tr';
+        return translations[lang]?.[key] || translations['tr']?.[key] || fallback || key;
+    }
+
+    // Make getText globally available
+    window.getText = getText;
 
     function switchLanguage(lang) {
         // Save preference to localStorage
@@ -1273,5 +1789,1488 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    console.log("DentaCare Scripts Loaded");
+    // ============================================
+    // Before/After Interactive Slider
+    // ============================================
+    document.querySelectorAll('.before-after-slider').forEach(slider => {
+        const container = slider.querySelector('.slider-container');
+        if (!container) return;
+
+        const afterWrapper = slider.querySelector('.image-after-wrapper');
+        const handle = slider.querySelector('.slider-handle');
+
+        if (!afterWrapper || !handle) return;
+
+        let isDragging = false;
+
+        const updateSliderPosition = (e) => {
+            const rect = container.getBoundingClientRect();
+            const x = (e.type.includes('touch') ? e.touches[0].clientX : e.clientX) - rect.left;
+            const percentage = Math.max(0, Math.min(100, (x / rect.width) * 100));
+
+            afterWrapper.style.width = `${100 - percentage}%`;
+            handle.style.left = `${percentage}%`;
+        };
+
+        const startDrag = (e) => {
+            isDragging = true;
+            e.preventDefault();
+        };
+
+        const stopDrag = () => {
+            isDragging = false;
+        };
+
+        const handleMove = (e) => {
+            if (!isDragging) return;
+            updateSliderPosition(e);
+        };
+
+        // Mouse events
+        handle.addEventListener('mousedown', startDrag);
+        document.addEventListener('mouseup', stopDrag);
+        document.addEventListener('mousemove', handleMove);
+
+        // Touch events
+        handle.addEventListener('touchstart', startDrag);
+        document.addEventListener('touchend', stopDrag);
+        document.addEventListener('touchmove', (e) => {
+            if (isDragging) {
+                updateSliderPosition(e);
+            }
+        });
+
+        // Click to move
+        container.addEventListener('click', updateSliderPosition);
+    });
+
+    // ============================================
+    // Booking Wizard
+    // ============================================
+    class BookingWizard {
+        constructor(container) {
+            this.container = container;
+            this.currentStep = 1;
+            this.totalSteps = 5;
+            this.selectedData = {
+                service: null,
+                serviceName: null,
+                doctor: null,
+                doctorName: null,
+                date: null,
+                time: null
+            };
+            this.init();
+        }
+
+        init() {
+            this.setupStepNavigation();
+            this.setupServiceSelection();
+            this.setupDoctorSelection();
+            this.setupDateTimeSelection();
+            this.setupFormSubmission();
+        }
+
+        setupStepNavigation() {
+            this.container.querySelectorAll('.btn-next').forEach(btn => {
+                btn.addEventListener('click', () => this.nextStep());
+            });
+
+            this.container.querySelectorAll('.btn-back').forEach(btn => {
+                btn.addEventListener('click', () => this.previousStep());
+            });
+        }
+
+        setupServiceSelection() {
+            this.container.querySelectorAll('.service-btn').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    this.container.querySelectorAll('.service-btn').forEach(b => b.classList.remove('selected'));
+                    btn.classList.add('selected');
+                    this.selectedData.service = btn.dataset.service;
+                    this.selectedData.serviceName = btn.querySelector('span')?.textContent || btn.dataset.service;
+                    this.enableNextButton(1);
+                });
+            });
+        }
+
+        setupDoctorSelection() {
+            this.container.querySelectorAll('.doctor-btn').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    this.container.querySelectorAll('.doctor-btn').forEach(b => b.classList.remove('selected'));
+                    btn.classList.add('selected');
+                    this.selectedData.doctor = btn.dataset.doctor;
+                    this.selectedData.doctorName = btn.querySelector('h4')?.textContent || btn.dataset.doctor;
+                    this.enableNextButton(2);
+                });
+            });
+        }
+
+        setupDateTimeSelection() {
+            // Timeslot selection
+            this.container.querySelectorAll('.timeslot:not(:disabled)').forEach(slot => {
+                slot.addEventListener('click', () => {
+                    this.container.querySelectorAll('.timeslot').forEach(s => s.classList.remove('selected'));
+                    slot.classList.add('selected');
+                    this.selectedData.time = slot.dataset.time;
+                    this.checkDateTimeComplete();
+                });
+            });
+
+            // Calendar day selection
+            this.container.querySelectorAll('.calendar-day:not(.disabled)').forEach(day => {
+                day.addEventListener('click', () => {
+                    this.container.querySelectorAll('.calendar-day').forEach(d => d.classList.remove('selected'));
+                    day.classList.add('selected');
+                    this.selectedData.date = day.textContent;
+                    this.checkDateTimeComplete();
+                });
+            });
+        }
+
+        checkDateTimeComplete() {
+            if (this.selectedData.date && this.selectedData.time) {
+                this.enableNextButton(3);
+            }
+        }
+
+        setupFormSubmission() {
+            const form = this.container.querySelector('.booking-form');
+            if (form) {
+                form.addEventListener('submit', (e) => {
+                    e.preventDefault();
+                    this.submitBooking();
+                });
+            }
+        }
+
+        nextStep() {
+            if (this.currentStep < this.totalSteps) {
+                this.hideStep(this.currentStep);
+                this.currentStep++;
+                this.showStep(this.currentStep);
+                this.updateStepIndicator();
+
+                if (this.currentStep === 4) {
+                    this.updateSummary();
+                }
+            }
+        }
+
+        previousStep() {
+            if (this.currentStep > 1) {
+                this.hideStep(this.currentStep);
+                this.currentStep--;
+                this.showStep(this.currentStep);
+                this.updateStepIndicator();
+            }
+        }
+
+        hideStep(step) {
+            const content = this.container.querySelector(`.wizard-content[data-step="${step}"]`);
+            if (content) content.classList.remove('active');
+        }
+
+        showStep(step) {
+            const content = this.container.querySelector(`.wizard-content[data-step="${step}"]`);
+            if (content) content.classList.add('active');
+        }
+
+        updateStepIndicator() {
+            this.container.querySelectorAll('.wizard-steps .step').forEach((step, index) => {
+                step.classList.remove('active', 'completed');
+                if (index + 1 < this.currentStep) {
+                    step.classList.add('completed');
+                } else if (index + 1 === this.currentStep) {
+                    step.classList.add('active');
+                }
+            });
+        }
+
+        enableNextButton(step) {
+            const nextBtn = this.container.querySelector(`.wizard-content[data-step="${step}"] .btn-next`);
+            if (nextBtn) nextBtn.removeAttribute('disabled');
+        }
+
+        updateSummary() {
+            const summaryService = document.getElementById('summary-service');
+            const summaryDoctor = document.getElementById('summary-doctor');
+            const summaryDate = document.getElementById('summary-date');
+            const summaryTime = document.getElementById('summary-time');
+
+            if (summaryService) summaryService.textContent = this.selectedData.serviceName || '-';
+            if (summaryDoctor) summaryDoctor.textContent = this.selectedData.doctorName || '-';
+            if (summaryDate) summaryDate.textContent = this.selectedData.date || '-';
+            if (summaryTime) summaryTime.textContent = this.selectedData.time || '-';
+        }
+
+        submitBooking() {
+            console.log('Booking submitted:', this.selectedData);
+
+            // Generate confirmation code
+            const confirmCode = 'RND-' + new Date().getFullYear() + '-' + Math.floor(Math.random() * 10000).toString().padStart(4, '0');
+            const confirmCodeEl = this.container.querySelector('.confirmation-code strong');
+            if (confirmCodeEl) confirmCodeEl.textContent = confirmCode;
+
+            // Show confirmation
+            this.hideStep(4);
+            this.currentStep = 5;
+            this.showStep(5);
+            this.updateStepIndicator();
+        }
+    }
+
+    // Initialize Booking Wizard if exists
+    const bookingWizardEl = document.querySelector('.booking-wizard');
+    if (bookingWizardEl) {
+        new BookingWizard(bookingWizardEl);
+    }
+
+    // ============================================
+    // Cost Calculator
+    // ============================================
+    class CostCalculator {
+        constructor(container) {
+            this.container = container;
+            this.selectedTreatments = [];
+            this.totalCost = 0;
+            this.selectedMonths = 1;
+            this.init();
+        }
+
+        init() {
+            this.setupCheckboxes();
+            this.setupPaymentTabs();
+            this.setupCountSelectors();
+        }
+
+        setupCheckboxes() {
+            this.container.querySelectorAll('.treatment-checkbox input[type="checkbox"]').forEach(checkbox => {
+                checkbox.addEventListener('change', () => this.updateCalculator());
+            });
+        }
+
+        setupPaymentTabs() {
+            this.container.querySelectorAll('.payment-tab').forEach(tab => {
+                tab.addEventListener('click', () => {
+                    this.container.querySelectorAll('.payment-tab').forEach(t => t.classList.remove('active'));
+                    tab.classList.add('active');
+                    this.selectedMonths = parseInt(tab.dataset.months);
+                    this.updateMonthlyPayment();
+                });
+            });
+        }
+
+        setupCountSelectors() {
+            this.container.querySelectorAll('.count-minus').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    const input = btn.nextElementSibling;
+                    if (input && input.value > 1) {
+                        input.value = parseInt(input.value) - 1;
+                        this.updateCalculator();
+                    }
+                });
+            });
+
+            this.container.querySelectorAll('.count-plus').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    const input = btn.previousElementSibling;
+                    const max = parseInt(input?.max) || 32;
+                    if (input && input.value < max) {
+                        input.value = parseInt(input.value) + 1;
+                        this.updateCalculator();
+                    }
+                });
+            });
+
+            this.container.querySelectorAll('.count-input').forEach(input => {
+                input.addEventListener('change', () => this.updateCalculator());
+            });
+        }
+
+        updateCalculator() {
+            this.selectedTreatments = [];
+            this.totalCost = 0;
+
+            this.container.querySelectorAll('.treatment-checkbox input[type="checkbox"]:checked').forEach(checkbox => {
+                const price = parseInt(checkbox.dataset.price) || 0;
+                const name = checkbox.dataset.name || 'Tedavi';
+                const countInput = checkbox.closest('.treatment-checkbox')?.querySelector('.count-input');
+                const count = countInput ? parseInt(countInput.value) : 1;
+
+                this.selectedTreatments.push({ name, price, count });
+                this.totalCost += price * count;
+            });
+
+            this.render();
+            this.updateMonthlyPayment();
+        }
+
+        render() {
+            const selectedContainer = document.getElementById('selected-treatments');
+            if (!selectedContainer) return;
+
+            if (this.selectedTreatments.length === 0) {
+                selectedContainer.innerHTML = '<p class="empty-state">Tedavi seçimi yapınız</p>';
+            } else {
+                selectedContainer.innerHTML = this.selectedTreatments.map(item => `
+                    <div class="selected-item">
+                        <span>${item.name} ${item.count > 1 ? `(x${item.count})` : ''}</span>
+                        <span>₺${(item.price * item.count).toLocaleString('tr-TR')}</span>
+                    </div>
+                `).join('');
+            }
+
+            const totalEl = document.getElementById('total-cost');
+            if (totalEl) totalEl.textContent = `₺${this.totalCost.toLocaleString('tr-TR')}`;
+        }
+
+        updateMonthlyPayment() {
+            const monthly = Math.round(this.totalCost / this.selectedMonths);
+            const monthlyEl = document.getElementById('monthly-amount');
+            if (monthlyEl) monthlyEl.textContent = `₺${monthly.toLocaleString('tr-TR')}`;
+        }
+    }
+
+    // Initialize Cost Calculator if exists
+    const costCalculatorEl = document.querySelector('#cost-calculator');
+    if (costCalculatorEl) {
+        new CostCalculator(costCalculatorEl);
+    }
+
+    // ============================================
+    // CHAT WIDGET - SMART CUSTOMER REPRESENTATIVE (SEDA 2.0)
+    // ============================================
+    // ============================================
+    // SEDA 3.0: INTELLIGENT WIZARD (The "Wizard" Logic)
+    // ============================================
+    function initChatWidget() { // Function name kept for compatibility with init call
+        const trigger = document.getElementById('seda-trigger');
+        const overlay = document.getElementById('seda-wizard-overlay');
+        const container = document.getElementById('seda-wizard-container');
+        const body = document.getElementById('wizard-body');
+        const input = document.getElementById('wizard-input');
+        const badge = document.getElementById('seda-badge');
+
+        if (!trigger || !overlay || !container) return; // Exit if new DOM not present
+
+        // State
+        const state = {
+            isOpen: false,
+            stage: 'IDLE', // IDLE, QUALIFY, APPT, PHONE
+            history: [],
+            context: 'general' // general, implant, price
+        };
+
+        // --- Core Actions ---
+
+        window.toggleChat = function () {
+            state.isOpen = !state.isOpen;
+
+            if (state.isOpen) {
+                // OPEN
+                overlay.style.opacity = '1';
+                overlay.style.pointerEvents = 'auto';
+                container.classList.remove('translate-y-full', 'scale-95');
+                container.classList.add('translate-y-0', 'scale-100');
+
+                // Mobile slide-up
+                if (window.innerWidth < 768) {
+                    container.classList.add('active'); // Helper class for CSS transform
+                }
+
+                if (badge) {
+                    badge.classList.remove('scale-100');
+                    badge.classList.add('scale-0');
+                }
+
+                if (state.history.length === 0) {
+                    startWizardFlow();
+                } else {
+                    setTimeout(() => scrollToBottom(), 300);
+                }
+
+                // Auto-focus input
+                setTimeout(() => input?.focus(), 400);
+
+                // Mobile: Add backdrop class
+                if (window.innerWidth < 768) {
+                    document.body.classList.add('seda-chat-open');
+                }
+            } else {
+                // CLOSE
+                overlay.style.opacity = '0';
+                overlay.style.pointerEvents = 'none';
+                container.classList.add('translate-y-full', 'scale-95');
+                container.classList.remove('translate-y-0', 'scale-100');
+                if (window.innerWidth < 768) {
+                    container.classList.remove('active');
+                }
+
+                // Mobile: Remove backdrop class
+                document.body.classList.remove('seda-chat-open');
+
+                // Minimal Trigger Mode
+                trigger.classList.add('scale-90', 'opacity-80');
+            }
+        };
+
+        // --- Logic Flows ---
+
+        function startWizardFlow() {
+            // Intelligent Entry: Check URL/Hash
+            const hash = window.location.hash;
+            let greeting = "Merhaba! Size nasıl yardımcı olabilirim?";
+            let options = [];
+
+            if (hash === '#implant-section') {
+                greeting = "İmplant tedavisi ve fiyatları hakkında bilgi mi almak istiyorsunuz?";
+                options = [
+                    { label: "Evet, İmplant Fiyatları", action: "qualify_implant" },
+                    { label: "Diğer Tedaviler", action: "show_menu" }
+                ];
+            } else if (hash === '#fiyatlar') {
+                greeting = "Tedavi fiyat hesaplayıcımızı kullanmak ister misiniz?";
+                options = [
+                    { label: "🧮 Hesaplayıcıyı Aç", action: "open_calculator" },
+                    { label: "Fiyat Listesi", action: "show_price_list" }
+                ];
+            } else {
+                greeting = getTimeBasedGreeting();
+                options = [
+                    { label: "📅 Randevu Al", action: "appointment" },
+                    { label: "💰 Fiyatlar", action: "qualify_start" },
+                    { label: "💬 WhatsApp", action: "whatsapp" }
+                ];
+            }
+
+            addBotMessage(greeting);
+            setTimeout(() => showOptions(options), 600);
+        }
+
+        function handleAction(action, label) {
+            addUserMessage(label); // Show user selection
+
+            switch (action) {
+                case 'qualify_start':
+                case 'show_price_list':
+                    addBotMessage("Anında fiyat hesaplamak için sizi **Akıllı Hesaplayıcıya** yönlendiriyorum... 🧮");
+                    setTimeout(() => {
+                        handleAction('open_calculator', 'Hesaplayıcıyı Aç');
+                    }, 1200);
+                    break;
+
+                case 'show_menu':
+                case 'qualify_other':
+                    addBotMessage("Size nasıl yardımcı olabilirim?");
+                    showOptions([
+                        { label: "📅 Online Randevu", action: "appointment" },
+                        { label: "💰 Fiyat Hesapla", action: "open_calculator" },
+                        { label: "💬 WhatsApp Destek", action: "whatsapp_fallback" }
+                    ]);
+                    break;
+
+                case 'qualify_implant':
+                    addBotMessage("İmplant tedavisi için ne yapmak istersiniz?");
+                    showOptions([
+                        { label: "💰 Fiyat Hesapla", action: "open_calculator" },
+                        { label: "📅 Randevu Al", action: "appointment" },
+                        { label: "💬 Soru Sor", action: "whatsapp_push_implant" }
+                    ]);
+                    break;
+
+                case 'qualify_esthetic':
+                    addBotMessage("Gülüş tasarımı ve zirkonyum için seçenekleriniz:");
+                    showOptions([
+                        { label: "📅 Randevu Al", action: "appointment" },
+                        { label: "💰 Fiyatlar", action: "open_calculator" },
+                        { label: "💬 WhatsApp", action: "whatsapp_other" }
+                    ]);
+                    break;
+
+                case 'offer_single':
+                case 'offer_all':
+                    // Legacy cases redirect to calculator now
+                    handleAction('open_calculator', 'Fiyat Hesapla');
+                    break;
+
+                case 'open_calculator':
+                    toggleChat();
+                    document.querySelector('#cost-calculator')?.scrollIntoView({ behavior: 'smooth' });
+                    break;
+
+                case 'appointment':
+                    addBotMessage("Sizi online randevu sihirbazına yönlendiriyorum...");
+                    setTimeout(() => {
+                        toggleChat();
+                        document.querySelector('#booking-wizard')?.scrollIntoView({ behavior: 'smooth' });
+                    }, 1200);
+                    break;
+
+                case 'whatsapp':
+                case 'whatsapp_push_implant':
+                case 'whatsapp_kids':
+                case 'whatsapp_other':
+                case 'whatsapp_fallback':
+                    let msg = "Merhaba, bilgi almak istiyorum.";
+                    if (action === 'whatsapp_push_implant') msg = "Merhaba, İmplant kampanyanız hakkında bilgi almak istiyorum.";
+                    if (action === 'whatsapp_kids') msg = "Merhaba, Çocuk diş hekimliği (Pedodonti) hakkında bilgi almak istiyorum.";
+                    if (action === 'whatsapp_fallback') msg = "Merhaba, bir konu hakkında desteğe ihtiyacım var: " + (label || '');
+
+                    openWhatsApp(msg);
+                    break;
+
+                default:
+                    openWhatsApp("Merhaba, " + label + " hakkında bilgi almak istiyorum.");
+                    break;
+            }
+        }
+
+        // --- Render Helpers ---
+
+        // --- Typing Indicator ---
+        function showTypingIndicator() {
+            const typingId = 'seda-typing-indicator';
+            if (document.getElementById(typingId)) return; // Already showing
+
+            const div = document.createElement('div');
+            div.id = typingId;
+            div.className = 'flex gap-3 items-start wizard-message-enter';
+            div.innerHTML = `
+                <div class="w-8 h-8 rounded-full bg-gradient-to-tr from-teal-500 to-green-500 p-0.5 shrink-0 shadow-sm mt-1 animate-pulse">
+                    <img src="https://ui-avatars.com/api/?name=Seda+Yilmaz&background=0D9488&color=fff&size=128" class="w-full h-full rounded-full object-cover">
+                </div>
+                <div class="glass-message bg-white/90 backdrop-blur-sm border border-gray-100 text-gray-500 rounded-2xl rounded-tl-sm py-2.5 px-4 shadow-sm text-sm italic flex items-center gap-2">
+                    <span class="flex gap-1">
+                        <span class="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style="animation-delay: 0ms"></span>
+                        <span class="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style="animation-delay: 150ms"></span>
+                        <span class="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style="animation-delay: 300ms"></span>
+                    </span>
+                    <span>Seda yazıyor</span>
+                </div>
+            `;
+            body.appendChild(div);
+            scrollToBottom();
+        }
+
+        function hideTypingIndicator() {
+            const indicator = document.getElementById('seda-typing-indicator');
+            if (indicator) {
+                indicator.remove();
+            }
+        }
+
+        function addBotMessage(text, skipTyping = false) {
+            if (skipTyping) {
+                renderBotMessage(text);
+            } else {
+                showTypingIndicator();
+                setTimeout(() => {
+                    hideTypingIndicator();
+                    renderBotMessage(text);
+                }, 800 + Math.random() * 400); // Random delay for natural feel
+            }
+        }
+
+        function renderBotMessage(text) {
+            const div = document.createElement('div');
+            div.className = 'flex gap-3 items-start wizard-message-enter';
+            div.style.animation = 'slideInLeft 0.3s ease-out';
+            div.innerHTML = `
+                <div class="w-8 h-8 rounded-full bg-gradient-to-tr from-teal-500 to-green-500 p-0.5 shrink-0 shadow-sm mt-1 ring-2 ring-green-200 ring-offset-1">
+                    <img src="https://ui-avatars.com/api/?name=Seda+Yilmaz&background=0D9488&color=fff&size=128" class="w-full h-full rounded-full object-cover">
+                </div>
+                <div class="glass-message bg-white/90 backdrop-blur-sm border border-gray-100 text-gray-800 rounded-2xl rounded-tl-sm py-2.5 px-4 shadow-sm text-sm leading-relaxed max-w-[85%]">
+                    ${text}
+                </div>
+            `;
+            body.appendChild(div);
+            scrollToBottom();
+            saveHistory('bot', text);
+        }
+
+        function addUserMessage(text) {
+            const div = document.createElement('div');
+            div.className = 'flex justify-end wizard-message-enter';
+            div.innerHTML = `
+                <div class="bg-blue-600 text-white rounded-2xl rounded-tr-sm py-2.5 px-4 shadow-md text-sm leading-relaxed max-w-[85%]">
+                    ${text}
+                </div>
+            `;
+            body.appendChild(div);
+            scrollToBottom();
+            saveHistory('user', text);
+        }
+
+        function showOptions(options) {
+            // Options Container (Grid or List)
+            const div = document.createElement('div');
+            div.className = 'grid grid-cols-1 md:grid-cols-2 gap-2 mt-2 w-full wizard-message-enter';
+
+            options.forEach(opt => {
+                const btn = document.createElement('button');
+                btn.className = 'wizard-option-card bg-white border border-gray-200 hover:border-blue-400 p-3 rounded-xl text-left shadow-sm group transition-all relative overflow-hidden';
+                btn.onclick = () => {
+                    // Disable all buttons in this group
+                    div.querySelectorAll('button').forEach(b => {
+                        b.disabled = true;
+                        b.classList.add('opacity-50');
+                    });
+                    handleAction(opt.action, opt.label);
+                };
+                btn.innerHTML = `
+                    <div class="relative z-10 font-medium text-gray-700 group-hover:text-blue-600 text-sm flex items-center gap-2">
+                        ${opt.label}
+                    </div>
+                    <div class="absolute inset-0 bg-blue-50 opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                `;
+                div.appendChild(btn);
+            });
+
+            body.appendChild(div);
+            scrollToBottom();
+        }
+
+        function scrollToBottom() {
+            body.scrollTo({ top: body.scrollHeight, behavior: 'smooth' });
+        }
+
+        function getTimeBasedGreeting() {
+            const h = new Date().getHours();
+            if (h < 12) return "Günaydın! ☀️";
+            if (h < 18) return "Tünaydın! 🌤️";
+            return "İyi akşamlar! 🌙";
+        }
+
+        function openWhatsApp(text) {
+            const url = `https://wa.me/905555555555?text=${encodeURIComponent(text)}`;
+            window.open(url, '_blank');
+        }
+
+        function saveHistory(role, text) {
+            state.history.push({ role, text });
+        }
+
+        // Handle User Input Form
+        window.handleUserSubmit = function (e) {
+            e.preventDefault();
+            const val = input.value.trim();
+            if (!val) return;
+            addUserMessage(val);
+            input.value = '';
+
+            // Smart Keyword Logic (Seda 4.0 Intelligence)
+            const lower = val.toLowerCase();
+
+            // Emergency/Urgent keywords
+            if (lower.includes('acil') || lower.includes('ağrı') || lower.includes('acı') || lower.includes('şiş')) {
+                addBotMessage("Diş ağrısı çok rahatsız edici, anlıyorum! 🦷 Sizi hemen aynı gün randevuya alalım.");
+                setTimeout(() => {
+                    showOptions([
+                        { label: "🚨 ACİL Randevu Al", action: "appointment" },
+                        { label: "📞 Hemen Ara", action: "whatsapp" }
+                    ]);
+                }, 400);
+            }
+            // Price keywords
+            else if (lower.includes('fiyat') || lower.includes('ücret') || lower.includes('kaç para') || lower.includes('ne kadar')) {
+                handleAction('qualify_start', val);
+            }
+            // Appointment keywords
+            else if (lower.includes('randevu') || lower.includes('yer') || lower.includes('saat') || lower.includes('müsait')) {
+                handleAction('appointment', val);
+            }
+            // Implant keywords
+            else if (lower.includes('implant') || lower.includes('diş eksik')) {
+                handleAction('qualify_implant', val);
+            }
+            // Whitening keywords
+            else if (lower.includes('beyazlatma') || lower.includes('beyaz') || lower.includes('sarı')) {
+                addBotMessage("Diş beyazlatma ile ilgileniyorsunuz! ✨ Hollywood gülüşüne sadece bir adım uzaktasınız.");
+                setTimeout(() => {
+                    showOptions([
+                        { label: "💰 Fiyat Hesapla", action: "open_calculator" },
+                        { label: "📅 Randevu Al", action: "appointment" }
+                    ]);
+                }, 400);
+            }
+            // Kids keywords
+            else if (lower.includes('çocuk') || lower.includes('bebek') || lower.includes('pedodonti')) {
+                addBotMessage("Çocuk diş hekimliği (Pedodonti) uzmanlarımız minik hastalarımız için özel deneyim sunuyor! 👶");
+                setTimeout(() => {
+                    showOptions([
+                        { label: "📅 Çocuk Randevusu", action: "appointment" },
+                        { label: "💬 Soru Sor", action: "whatsapp_kids" }
+                    ]);
+                }, 400);
+            }
+            // Esthetic keywords
+            else if (lower.includes('estetik') || lower.includes('zirkon') || lower.includes('gülüş') || lower.includes('laminat')) {
+                handleAction('qualify_esthetic', val);
+            }
+            // Greeting keywords
+            else if (lower.includes('merhaba') || lower.includes('selam') || lower.includes('hey')) {
+                addBotMessage("Merhaba! 👋 Size nasıl yardımcı olabilirim?");
+                setTimeout(() => {
+                    showOptions([
+                        { label: "📅 Randevu Al", action: "appointment" },
+                        { label: "💰 Fiyatlar", action: "qualify_start" },
+                        { label: "💬 WhatsApp", action: "whatsapp" }
+                    ]);
+                }, 400);
+            }
+            // Thanks/Bye keywords
+            else if (lower.includes('teşekkür') || lower.includes('sağol') || lower.includes('görüşürüz')) {
+                addBotMessage("Rica ederim! 😊 Başka bir sorunuz olursa buradayım. İyi günler dilerim!");
+            }
+            else {
+                // FALLBACK MENU (Smart Suggestions)
+                addBotMessage("Bunu tam anlayamadım ama şunlardan birini mi demek istediniz?");
+                setTimeout(() => {
+                    showOptions([
+                        { label: "📅 Online Randevu", action: "appointment" },
+                        { label: "💰 Fiyat Hesapla", action: "open_calculator" },
+                        { label: "📞 Müşteri Hizmetleri", action: "whatsapp_fallback" }
+                    ]);
+                }, 400);
+            }
+        };
+    }
+
+    // ============================================
+    // APPOINTMENT SERVICE (Background Submission + Real Email)
+    // ============================================
+    const AppointmentService = {
+        async submit(data) {
+            // 1. Save to LocalStorage (always succeeds)
+            this.saveToStorage(data);
+
+            // 2. Send Real Email via EmailJS
+            try {
+                await this.sendEmail(data);
+                return { success: true };
+            } catch (error) {
+                console.error('Email sending failed:', error);
+                // Still return success since data is saved locally
+                return { success: true, emailError: true };
+            }
+        },
+
+        saveToStorage(data) {
+            const appointments = JSON.parse(localStorage.getItem('denta_appointments') || '[]');
+            data.id = Date.now();
+            data.timestamp = new Date().toISOString();
+            data.status = 'pending'; // new, contacted, completed
+            appointments.push(data);
+            localStorage.setItem('denta_appointments', JSON.stringify(appointments));
+            console.log('Appointment saved locally:', data);
+        },
+
+        async sendEmail(data) {
+            const config = window.EMAILJS_CONFIG;
+            const adminEmail = 'g.karhiman078@gmail.com';
+
+            // Format date for readability
+            const formattedDate = data.date ? new Date(data.date).toLocaleDateString('tr-TR', {
+                weekday: 'long', year: 'numeric', month: 'long', day: 'numeric'
+            }) : 'Belirtilmedi';
+
+            // Build email template parameters
+            const templateParams = {
+                to_email: adminEmail,
+                from_name: data.name || 'Anonim',
+                from_phone: data.phone || 'Belirtilmedi',
+                service_type: data.service || 'Genel',
+                doctor: data.doctor || 'Belirtilmedi',
+                appointment_date: formattedDate,
+                appointment_time: data.time || 'Belirtilmedi',
+                message: data.message || '',
+                form_type: data.type || 'unknown',
+                timestamp: new Date().toLocaleString('tr-TR')
+            };
+
+            // Check if EmailJS is properly configured
+            if (!config || config.PUBLIC_KEY === 'YOUR_PUBLIC_KEY') {
+                console.warn('%c[EmailJS] Not configured - using mock mode', 'color: orange; font-weight: bold');
+                console.log('Would send to:', adminEmail);
+                console.log('Template Params:', templateParams);
+                return Promise.resolve(); // Mock success
+            }
+
+            // Check if emailjs is available
+            if (typeof emailjs === 'undefined') {
+                console.error('[EmailJS] SDK not loaded');
+                return Promise.resolve(); // Still allow local save
+            }
+
+            // Send via EmailJS with timeout protection
+            console.log('%c[EmailJS] Sending real email...', 'color: green; font-weight: bold');
+
+            // Create timeout promise (8 seconds max)
+            const timeoutPromise = new Promise((_, reject) => {
+                setTimeout(() => reject(new Error('Email timeout')), 8000);
+            });
+
+            // Race between email send and timeout
+            try {
+                await Promise.race([
+                    emailjs.send(config.SERVICE_ID, config.TEMPLATE_ID, templateParams),
+                    timeoutPromise
+                ]);
+                console.log('%c[EmailJS] Email sent successfully!', 'color: green; font-weight: bold');
+            } catch (error) {
+                console.warn('%c[EmailJS] Email failed, but appointment saved locally', 'color: orange');
+                console.error('Error:', error);
+                // Don't throw - let the appointment proceed since it's saved locally
+            }
+        }
+    };
+
+    // ============================================
+    // BEFORE/AFTER GALLERY - Static Display (No Slider)
+    // ============================================
+    // Note: Slider removed in favor of professional static gallery cards
+    // No JavaScript needed for static gallery
+
+
+    // ============================================
+    // BOOKING WIZARD - Full Implementation
+    // ============================================
+    function initBookingWizard() {
+        const wizard = {
+            step: 1,
+            data: { service: '', doctor: '', date: '', time: '', name: '', phone: '' }
+        };
+
+        // Generate date options
+        const dateContainer = document.getElementById('date-options');
+        if (dateContainer && dateContainer.children.length === 0) {
+            const days = ['Paz', 'Pzt', 'Sal', 'Çar', 'Per', 'Cum', 'Cmt'];
+            const months = ['Oca', 'Şub', 'Mar', 'Nis', 'May', 'Haz', 'Tem', 'Ağu', 'Eyl', 'Eki', 'Kas', 'Ara'];
+
+            for (let i = 1; i <= 7; i++) {
+                const date = new Date();
+                date.setDate(date.getDate() + i);
+
+                const btn = document.createElement('button');
+                btn.type = 'button';
+                btn.className = 'date-option flex-shrink-0 px-4 py-3 rounded-xl border-2 border-gray-200 hover:border-clinical-primary transition-all text-center min-w-[80px]';
+                btn.dataset.date = date.toISOString().split('T')[0];
+                btn.innerHTML = `
+                    <span class="block text-xs text-gray-500">${days[date.getDay()]}</span>
+                    <span class="block text-lg font-bold text-gray-800">${date.getDate()}</span>
+                    <span class="block text-xs text-gray-400">${months[date.getMonth()]}</span>
+                `;
+                dateContainer.appendChild(btn);
+            }
+        }
+
+        // Service selection - go to step 2
+        document.querySelectorAll('.service-option').forEach(btn => {
+            btn.addEventListener('click', () => {
+                document.querySelectorAll('.service-option').forEach(b => b.classList.remove('selected'));
+                btn.classList.add('selected');
+                wizard.data.service = btn.querySelector('span')?.textContent || btn.dataset.service;
+                setTimeout(() => goToStep(2), 300);
+            });
+        });
+
+        // Doctor selection - go to step 3
+        document.querySelectorAll('.doctor-option').forEach(btn => {
+            btn.addEventListener('click', () => {
+                document.querySelectorAll('.doctor-option').forEach(b => b.classList.remove('selected'));
+                btn.classList.add('selected');
+                wizard.data.doctor = btn.querySelector('.font-bold')?.textContent || btn.dataset.doctor;
+                setTimeout(() => goToStep(3), 300);
+            });
+        });
+
+        // Date selection
+        document.addEventListener('click', (e) => {
+            const dateBtn = e.target.closest('.date-option');
+            if (dateBtn) {
+                document.querySelectorAll('.date-option').forEach(b => b.classList.remove('selected'));
+                dateBtn.classList.add('selected');
+                wizard.data.date = dateBtn.dataset.date;
+            }
+        });
+
+        // Time selection
+        document.querySelectorAll('.time-option').forEach(btn => {
+            btn.addEventListener('click', () => {
+                document.querySelectorAll('.time-option').forEach(b => b.classList.remove('selected'));
+                btn.classList.add('selected');
+                wizard.data.time = btn.dataset.time;
+            });
+        });
+
+        // Back buttons
+        document.querySelectorAll('.wizard-back').forEach(btn => {
+            btn.addEventListener('click', () => {
+                if (wizard.step > 1) {
+                    goToStep(wizard.step - 1);
+                }
+            });
+        });
+
+        // Submit button
+        // Submit button with Background Service Integration
+        const submitBtn = document.querySelector('.wizard-submit');
+        if (submitBtn) {
+            submitBtn.addEventListener('click', async () => {
+                wizard.data.name = document.getElementById('wizard-name')?.value || '';
+                wizard.data.phone = document.getElementById('wizard-phone')?.value || '';
+
+                // Validation
+                if (!wizard.data.date) { alert('Lütfen bir tarih seçin'); return; }
+                if (!wizard.data.time) { alert('Lütfen bir saat seçin'); return; }
+                if (!wizard.data.name.trim()) { alert('Lütfen adınızı girin'); return; }
+                if (!wizard.data.phone.trim()) { alert('Lütfen telefon numaranızı girin'); return; }
+
+                // UI Loading State
+                const originalText = submitBtn.innerHTML;
+                submitBtn.disabled = true;
+                submitBtn.innerHTML = `
+                    <svg class="animate-spin -ml-1 mr-2 h-5 w-5 text-white inline-block" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                    </svg>
+                    Randevu Oluşturuluyor...
+                `;
+
+                try {
+                    // Background Submission
+                    await AppointmentService.submit({
+                        type: 'wizard_booking',
+                        service: wizard.data.service,
+                        doctor: wizard.data.doctor,
+                        date: wizard.data.date,
+                        time: wizard.data.time,
+                        name: wizard.data.name,
+                        phone: wizard.data.phone,
+                        created_at: new Date().toISOString()
+                    });
+
+                    // Success UI
+                    showSuccess();
+                } catch (error) {
+                    console.error('Submission failed:', error);
+                    alert('Bir hata oluştu. Lütfen tekrar deneyiniz.');
+                    submitBtn.disabled = false;
+                    submitBtn.innerHTML = originalText;
+                }
+            });
+        }
+
+        // Reset button
+        const resetBtn = document.querySelector('.wizard-reset');
+        if (resetBtn) {
+            resetBtn.addEventListener('click', () => {
+                wizard.step = 1;
+                wizard.data = { service: '', doctor: '', date: '', time: '', name: '', phone: '' };
+                document.querySelectorAll('.selected').forEach(el => el.classList.remove('selected'));
+                document.getElementById('wizard-name').value = '';
+                document.getElementById('wizard-phone').value = '';
+                goToStep(1);
+            });
+        }
+
+        function goToStep(step) {
+            wizard.step = step;
+
+            // Update panels
+            document.querySelectorAll('.wizard-panel').forEach(p => p.classList.remove('active'));
+            const targetPanel = document.querySelector(`.wizard-panel[data-panel="${step}"]`);
+            if (targetPanel) {
+                targetPanel.classList.add('active');
+            }
+
+            // Update step indicators
+            document.querySelectorAll('.wizard-step').forEach(s => {
+                const stepNum = parseInt(s.dataset.step);
+                s.classList.remove('active', 'completed');
+                if (stepNum === step) {
+                    s.classList.add('active');
+                } else if (stepNum < step) {
+                    s.classList.add('completed');
+                }
+            });
+
+            // Update lines
+            document.querySelectorAll('.wizard-line').forEach(l => {
+                const lineNum = parseInt(l.dataset.line);
+                l.classList.toggle('active', lineNum < step);
+            });
+
+            // Reinitialize icons
+            if (typeof lucide !== 'undefined') {
+                setTimeout(() => lucide.createIcons(), 50);
+            }
+        }
+
+        function showSuccess() {
+            document.querySelectorAll('.wizard-panel').forEach(p => p.classList.remove('active'));
+            const successPanel = document.querySelector('.wizard-panel[data-panel="success"]');
+            if (successPanel) {
+                successPanel.classList.add('active');
+            }
+
+            // Refresh Appointment Tracker Panel
+            if (typeof window.refreshAppointmentTracker === 'function') {
+                window.refreshAppointmentTracker();
+            }
+
+            const summary = document.getElementById('wizard-summary');
+            if (summary) {
+                const formattedDate = new Date(wizard.data.date).toLocaleDateString('tr-TR', {
+                    weekday: 'long',
+                    year: 'numeric',
+                    month: 'long',
+                    day: 'numeric'
+                });
+
+                summary.innerHTML = `
+                    <div class="space-y-3">
+                        <div class="flex items-center gap-3">
+                            <span class="text-gray-500">Tedavi:</span>
+                            <span class="font-semibold text-gray-800">${wizard.data.service}</span>
+                        </div>
+                        <div class="flex items-center gap-3">
+                            <span class="text-gray-500">Doktor:</span>
+                            <span class="font-semibold text-gray-800">${wizard.data.doctor}</span>
+                        </div>
+                        <div class="flex items-center gap-3">
+                            <span class="text-gray-500">Tarih:</span>
+                            <span class="font-semibold text-gray-800">${formattedDate}</span>
+                        </div>
+                        <div class="flex items-center gap-3">
+                            <span class="text-gray-500">Saat:</span>
+                            <span class="font-semibold text-gray-800">${wizard.data.time}</span>
+                        </div>
+                        <hr class="my-3">
+                        <div class="flex items-center gap-3">
+                            <span class="text-gray-500">Ad Soyad:</span>
+                            <span class="font-semibold text-gray-800">${wizard.data.name}</span>
+                        </div>
+                        <div class="flex items-center gap-3">
+                            <span class="text-gray-500">Telefon:</span>
+                            <span class="font-semibold text-gray-800">${wizard.data.phone}</span>
+                        </div>
+                    </div>
+                `;
+            }
+
+            // Reinitialize icons
+            if (typeof lucide !== 'undefined') {
+                setTimeout(() => lucide.createIcons(), 50);
+            }
+        }
+    }
+
+    // ============================================
+    // COST CALCULATOR - Full Implementation (FIXED)
+    // ============================================
+    function initCostCalculator() {
+        const treatmentNames = {
+            implant: 'Dental İmplant',
+            zirconium: 'Zirkonyum Kaplama',
+            whitening: 'Diş Beyazlatma',
+            veneer: 'Porselen Laminat',
+            filling: 'Kompozit Dolgu',
+            canal: 'Kanal Tedavisi'
+        };
+
+        const counts = {
+            implant: 1,
+            zirconium: 1,
+            veneer: 1
+        };
+
+        let months = 1;
+
+        function updateCalculator() {
+            let total = 0;
+            const selectedItems = [];
+
+            // Get all checked treatments
+            document.querySelectorAll('.calc-checkbox:checked').forEach(cb => {
+                const treatment = cb.dataset.treatment;
+                const price = parseInt(cb.dataset.price) || 0;
+                const count = counts[treatment] || 1;
+                const itemTotal = price * count;
+                total += itemTotal;
+
+                selectedItems.push({
+                    name: treatmentNames[treatment] || treatment,
+                    count: count,
+                    price: itemTotal
+                });
+            });
+
+            // Update total display
+            const totalEl = document.getElementById('calc-total');
+            if (totalEl) {
+                totalEl.textContent = '₺' + total.toLocaleString('tr-TR');
+            }
+
+            // Update monthly display based on selected plan
+            const monthlyEl = document.getElementById('calc-monthly');
+            if (monthlyEl) {
+                const monthlyAmount = months > 1 ? Math.round(total / months) : total;
+                monthlyEl.textContent = '₺' + monthlyAmount.toLocaleString('tr-TR');
+            }
+
+            // Update selected list
+            const listEl = document.getElementById('calc-selected-list');
+            if (listEl) {
+                if (selectedItems.length === 0) {
+                    listEl.innerHTML = '<p class="text-gray-400 text-sm italic">Tedavi seçimi yapınız...</p>';
+                } else {
+                    listEl.innerHTML = selectedItems.map(item => `
+                        <div class="flex justify-between items-center py-2 border-b border-gray-100">
+                            <span class="text-gray-700">${item.name} ${item.count > 1 ? '<span class="text-gray-400">x' + item.count + '</span>' : ''}</span>
+                            <span class="font-semibold text-gray-900">₺${item.price.toLocaleString('tr-TR')}</span>
+                        </div>
+                    `).join('');
+                }
+            }
+
+            // Update treatment item highlight
+            document.querySelectorAll('.treatment-item').forEach(item => {
+                const checkbox = item.querySelector('.calc-checkbox');
+                if (checkbox && checkbox.checked) {
+                    item.classList.add('border-clinical-primary', 'bg-blue-50/50');
+                    item.classList.remove('border-gray-200');
+                } else {
+                    item.classList.remove('border-clinical-primary', 'bg-blue-50/50');
+                    item.classList.add('border-gray-200');
+                }
+            });
+        }
+
+        // Checkbox change events
+        document.querySelectorAll('.calc-checkbox').forEach(cb => {
+            cb.addEventListener('change', updateCalculator);
+        });
+
+        // Increment buttons
+        document.querySelectorAll('.calc-increment').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const treatment = btn.dataset.treatment;
+                if (counts[treatment] !== undefined) {
+                    counts[treatment] = Math.min(10, counts[treatment] + 1);
+                    const countDisplay = document.querySelector(`.calc-count[data-treatment="${treatment}"]`);
+                    if (countDisplay) countDisplay.textContent = counts[treatment];
+                    updateCalculator();
+                }
+            });
+        });
+
+        // Decrement buttons
+        document.querySelectorAll('.calc-decrement').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const treatment = btn.dataset.treatment;
+                if (counts[treatment] !== undefined) {
+                    counts[treatment] = Math.max(1, counts[treatment] - 1);
+                    const countDisplay = document.querySelector(`.calc-count[data-treatment="${treatment}"]`);
+                    if (countDisplay) countDisplay.textContent = counts[treatment];
+                    updateCalculator();
+                }
+            });
+        });
+
+        // Payment plan tabs
+        document.querySelectorAll('.calc-payment-tab').forEach(tab => {
+            tab.addEventListener('click', () => {
+                // Update active state
+                document.querySelectorAll('.calc-payment-tab').forEach(t => {
+                    t.classList.remove('bg-white', 'text-clinical-primary', 'shadow-sm');
+                    t.classList.add('text-gray-600');
+                });
+                tab.classList.add('bg-white', 'text-clinical-primary', 'shadow-sm');
+                tab.classList.remove('text-gray-600');
+
+                // Update months
+                months = parseInt(tab.dataset.months) || 1;
+                updateCalculator();
+            });
+        });
+
+        // Initial update
+        updateCalculator();
+    }
+
+    // ============================================
+    // STANDARD APPOINTMENT FORM - Enhanced with Success Screen
+    // ============================================
+    function initAppointmentForm() {
+        const form = document.getElementById('appointment-form');
+        if (!form) {
+            console.log('[AppointmentForm] Form not found');
+            return;
+        }
+
+        console.log('[AppointmentForm] Initialized');
+
+        // Create Success Panel (hidden by default)
+        const formParent = form.parentElement;
+        const successPanel = document.createElement('div');
+        successPanel.id = 'appt-success-panel';
+        successPanel.className = 'hidden';
+        successPanel.innerHTML = `
+            <div class="text-center py-8">
+                <!-- Success Animation -->
+                <div class="w-20 h-20 bg-gradient-to-tr from-green-500 to-emerald-400 rounded-full flex items-center justify-center mx-auto mb-6 shadow-lg animate-bounce">
+                    <svg class="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path>
+                    </svg>
+                </div>
+                
+                <h3 class="text-2xl font-bold text-gray-800 mb-2">Randevunuz Alındı!</h3>
+                <p class="text-gray-500 mb-6">Talebiniz başarıyla iletildi.</p>
+                
+                <!-- Call Confirmation -->
+                <div class="bg-gradient-to-r from-blue-50 to-cyan-50 rounded-2xl p-6 mb-6 border border-blue-100">
+                    <div class="flex items-center justify-center gap-3 mb-3">
+                        <div class="w-12 h-12 bg-blue-500 rounded-full flex items-center justify-center">
+                            <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"></path>
+                            </svg>
+                        </div>
+                        <div class="text-left">
+                            <p class="text-lg font-bold text-blue-800">Sizi En Kısa Sürede Arayacağız!</p>
+                            <p class="text-sm text-blue-600">Genellikle 15 dakika içinde dönüş yapıyoruz.</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Appointment Summary -->
+                <div id="appt-summary" class="bg-gray-50 rounded-xl p-4 text-left text-sm space-y-2 mb-6">
+                    <!-- Will be filled dynamically -->
+                </div>
+                
+                <!-- New Appointment Button -->
+                <button type="button" id="new-appointment-btn" class="w-full bg-gradient-to-r from-clinical-primary to-blue-500 text-white font-bold py-4 rounded-xl shadow-lg hover:shadow-xl transition-all flex items-center justify-center gap-2">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+                    </svg>
+                    Yeni Randevu Oluştur
+                </button>
+            </div>
+        `;
+        formParent.appendChild(successPanel);
+
+        // New Appointment Button Handler
+        successPanel.querySelector('#new-appointment-btn').addEventListener('click', () => {
+            form.classList.remove('hidden');
+            successPanel.classList.add('hidden');
+            form.reset();
+        });
+
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            console.log('[AppointmentForm] Submit triggered');
+
+            const name = document.getElementById('appt-name')?.value || '';
+            const phone = document.getElementById('appt-phone')?.value || '';
+            const service = document.getElementById('appt-service')?.value || '';
+            const date = document.getElementById('appt-date')?.value || '';
+            const messageText = document.getElementById('appt-message')?.value || '';
+
+            // Validation
+            if (!name || !phone || !date) {
+                alert('Lütfen zorunlu alanları doldurunuz.');
+                return;
+            }
+
+            // UI Loading
+            const btn = form.querySelector('button[type="submit"]');
+            const originalText = btn.innerHTML;
+            btn.disabled = true;
+            btn.innerHTML = `
+                <svg class="animate-spin -ml-1 mr-2 h-5 w-5 text-white inline-block" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                </svg>
+                Gönderiliyor...
+            `;
+
+            try {
+                console.log('[AppointmentForm] Calling AppointmentService.submit');
+
+                // Background Submission
+                await AppointmentService.submit({
+                    type: 'standard_form',
+                    name,
+                    phone,
+                    service,
+                    date,
+                    message: messageText || 'Belirtilmedi',
+                    created_at: new Date().toISOString()
+                });
+
+                console.log('[AppointmentForm] Submission successful');
+
+                // Format date for display
+                const formattedDate = new Date(date).toLocaleDateString('tr-TR', {
+                    weekday: 'long', year: 'numeric', month: 'long', day: 'numeric'
+                });
+
+                // Update Summary
+                const summary = successPanel.querySelector('#appt-summary');
+                summary.innerHTML = `
+                    <div class="flex justify-between"><span class="text-gray-500">Ad Soyad:</span><span class="font-medium text-gray-800">${name}</span></div>
+                    <div class="flex justify-between"><span class="text-gray-500">Telefon:</span><span class="font-medium text-gray-800">${phone}</span></div>
+                    <div class="flex justify-between"><span class="text-gray-500">Hizmet:</span><span class="font-medium text-gray-800">${service}</span></div>
+                    <div class="flex justify-between"><span class="text-gray-500">Tarih:</span><span class="font-medium text-gray-800">${formattedDate}</span></div>
+                `;
+
+                // Show Success Panel
+                form.classList.add('hidden');
+                successPanel.classList.remove('hidden');
+
+                // Refresh Appointment Tracker Panel
+                if (typeof window.refreshAppointmentTracker === 'function') {
+                    window.refreshAppointmentTracker();
+                }
+
+                // Reset button state
+                btn.innerHTML = originalText;
+                btn.disabled = false;
+
+            } catch (error) {
+                console.error('[AppointmentForm] Submission failed:', error);
+                alert('Bir hata oluştu. Lütfen tekrar deneyiniz.');
+                btn.innerHTML = originalText;
+                btn.disabled = false;
+            }
+        });
+    }
+
+    // ============================================
+    // APPOINTMENT TRACKER PANEL (localStorage-based)
+    // ============================================
+    function initAppointmentTracker() {
+        const containers = [
+            document.querySelector('#booking-wizard .container'),
+            document.querySelector('#randevu .container')
+        ].filter(Boolean);
+
+        if (containers.length === 0) {
+            console.log('[AppointmentTracker] No containers found');
+            return;
+        }
+
+        console.log('[AppointmentTracker] Initialized');
+
+        // Create tracker panel HTML
+        function createTrackerPanel() {
+            const appointments = JSON.parse(localStorage.getItem('denta_appointments') || '[]');
+            const recentAppointments = appointments.slice(-5).reverse(); // Last 5, newest first
+
+            if (recentAppointments.length === 0) return null;
+
+            const panel = document.createElement('div');
+            panel.className = 'appointment-tracker-panel bg-white/95 backdrop-blur-xl rounded-2xl shadow-xl border border-gray-100 overflow-hidden mt-8 max-w-md mx-auto';
+            panel.innerHTML = `
+                <button class="tracker-toggle w-full flex items-center justify-between p-4 bg-gradient-to-r from-blue-50 to-cyan-50 hover:from-blue-100 hover:to-cyan-100 transition-colors">
+                    <div class="flex items-center gap-3">
+                        <div class="w-10 h-10 bg-blue-500 rounded-xl flex items-center justify-center">
+                            <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"></path>
+                            </svg>
+                        </div>
+                        <div class="text-left">
+                            <p class="font-bold text-gray-800">${getText('tracker_title')}</p>
+                            <p class="text-xs text-gray-500">${recentAppointments.length} ${getText('tracker_active')}</p>
+                        </div>
+                    </div>
+                    <svg class="w-5 h-5 text-gray-400 tracker-chevron transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                    </svg>
+                </button>
+                <div class="tracker-content hidden">
+                    <div class="divide-y divide-gray-100">
+                        ${recentAppointments.map(appt => {
+                const date = new Date(appt.date || appt.created_at);
+                const lang = localStorage.getItem('dentacare-lang') || 'tr';
+                const formattedDate = date.toLocaleDateString(lang === 'de' ? 'de-DE' : lang === 'en' ? 'en-US' : 'tr-TR', { day: 'numeric', month: 'short' });
+                const service = appt.service || getText('success_summary_service');
+                return `
+                                <div class="p-4 hover:bg-gray-50 transition-colors">
+                                    <div class="flex items-center justify-between mb-2">
+                                        <span class="font-medium text-gray-800">${service}</span>
+                                        <span class="text-sm text-gray-500">${formattedDate}</span>
+                                    </div>
+                                    <div class="flex items-center gap-2">
+                                        <span class="inline-flex items-center gap-1 px-2 py-1 bg-blue-100 text-blue-700 text-xs font-medium rounded-full">
+                                            <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"></path>
+                                            </svg>
+                                            ${getText('tracker_status_call')}
+                                        </span>
+                                        <span class="text-xs text-gray-400">${appt.name || ''}</span>
+                                    </div>
+                                </div>
+                            `;
+            }).join('')}
+                    </div>
+                </div>
+            `;
+
+            // Toggle functionality
+            const toggle = panel.querySelector('.tracker-toggle');
+            const content = panel.querySelector('.tracker-content');
+            const chevron = panel.querySelector('.tracker-chevron');
+
+            toggle.addEventListener('click', () => {
+                content.classList.toggle('hidden');
+                chevron.classList.toggle('rotate-180');
+            });
+
+            return panel;
+        }
+
+        // Add panels to containers
+        containers.forEach(container => {
+            const existingPanel = container.querySelector('.appointment-tracker-panel');
+            if (existingPanel) existingPanel.remove();
+
+            const panel = createTrackerPanel();
+            if (panel) {
+                container.appendChild(panel);
+            }
+        });
+
+        // Make refresh function globally available
+        window.refreshAppointmentTracker = () => {
+            containers.forEach(container => {
+                const existingPanel = container.querySelector('.appointment-tracker-panel');
+                if (existingPanel) existingPanel.remove();
+
+                const panel = createTrackerPanel();
+                if (panel) {
+                    container.appendChild(panel);
+                }
+            });
+        };
+    }
+
+    // ============================================
+    // INITIALIZE ALL COMPONENTS
+    // ============================================
+    // initBeforeAfterSliders(); // Removed in favor of static gallery
+    initBookingWizard();
+    initCostCalculator();
+    initAppointmentForm();
+    initChatWidget();
+    initAppointmentTracker(); // NEW: Appointment history panels
+
+    // Reinitialize Lucide icons for dynamically added content
+    if (typeof lucide !== 'undefined') {
+        setTimeout(() => lucide.createIcons(), 100);
+    }
+
+    console.log("DentaCare Scripts Loaded - Premium Edition v3.0");
 });

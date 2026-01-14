@@ -1,0 +1,16 @@
+# DentaCare Dental Clinic - robots.txt
+# https://dis-klinigi.vercel.app
+
+User-agent: *
+Allow: /
+
+# Sitemap location
+Sitemap: https://dis-klinigi.vercel.app/sitemap.xml
+
+# Crawl delay for respectful crawling
+Crawl-delay: 1
+
+# Block common non-content paths
+Disallow: /.git/
+Disallow: /node_modules/
+Disallow: /*.json$
